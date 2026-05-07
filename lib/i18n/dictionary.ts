@@ -283,6 +283,41 @@ export const dictionary = {
       "https://siemens.wd1.myworkdayjobs.com/Siemens_Careers, https://salesforce.wd12.myworkdayjobs.com/External_Career_Site",
     "settings.workdayBoards.help":
       "כל URL בשורה נפרדת או מופרד בפסיקים. אם תשאיר ריק, נשתמש ברשימה ברירת מחדל.",
+
+    // Inbox / Gmail
+    "nav.inbox": "תיבת דואר",
+    "inbox.title": "תיבת דואר חכמה",
+    "inbox.subtitle":
+      "סוכן AI סורק את המיילים שלך, מזהה מה קשור להגשות, ומציע פעולות.",
+    "inbox.connect": "חבר Gmail",
+    "inbox.disconnect": "נתק",
+    "inbox.connected": "מחובר ל-",
+    "inbox.notConnected.title": "Gmail לא מחובר",
+    "inbox.notConnected.desc":
+      "חבר את Gmail כדי שהסוכן יזהה תגובות, הזמנות לראיון, פניות מ-recruiters ועוד.",
+    "inbox.notConfigured.title": "Gmail integration לא מוגדר",
+    "inbox.notConfigured.desc":
+      "האדמין לא הוסיף עדיין GOOGLE_OAUTH_CLIENT_ID ו-GOOGLE_OAUTH_CLIENT_SECRET למשתני הסביבה. ראה README.",
+    "inbox.scan": "סרוק תיבת דואר",
+    "inbox.scanning": "סורק...",
+    "inbox.daysBack": "החודשים האחרונים",
+    "inbox.daysBack.30": "חודש",
+    "inbox.daysBack.60": "חודשיים",
+    "inbox.daysBack.90": "3 חודשים",
+    "inbox.empty": "לא נמצאו מיילים רלוונטיים בחיפוש האחרון",
+    "inbox.cat.rejection": "דחייה",
+    "inbox.cat.interview_invite": "הזמנה לראיון",
+    "inbox.cat.interview_followup": "מעקב ראיון",
+    "inbox.cat.offer": "הצעה!",
+    "inbox.cat.recruiter_outreach": "פניה מ-recruiter",
+    "inbox.cat.application_confirmation": "אישור הגשה",
+    "inbox.cat.automated_alert": "התראה אוטומטית",
+    "inbox.cat.other": "אחר",
+    "inbox.needsReply": "דורש מענה",
+    "inbox.applyStatus": "עדכן סטטוס ל",
+    "inbox.statusUpdated": "הסטטוס עודכן",
+    "inbox.linkedToJob": "מקושר ל",
+    "inbox.openInGmail": "פתח ב-Gmail",
   },
   en: {
     "brand.name": "CV Agent",
@@ -555,6 +590,40 @@ export const dictionary = {
       "https://siemens.wd1.myworkdayjobs.com/Siemens_Careers, https://salesforce.wd12.myworkdayjobs.com/External_Career_Site",
     "settings.workdayBoards.help":
       "One URL per line or comma-separated. If empty we use a default list.",
+
+    "nav.inbox": "Inbox",
+    "inbox.title": "Smart inbox",
+    "inbox.subtitle":
+      "The AI scans your email, finds what's related to your applications, and suggests actions.",
+    "inbox.connect": "Connect Gmail",
+    "inbox.disconnect": "Disconnect",
+    "inbox.connected": "Connected as",
+    "inbox.notConnected.title": "Gmail not connected",
+    "inbox.notConnected.desc":
+      "Connect Gmail so the agent can identify replies, interview invites, recruiter outreach, and more.",
+    "inbox.notConfigured.title": "Gmail integration not configured",
+    "inbox.notConfigured.desc":
+      "The admin hasn't set GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET. See README.",
+    "inbox.scan": "Scan inbox",
+    "inbox.scanning": "Scanning…",
+    "inbox.daysBack": "Look back",
+    "inbox.daysBack.30": "1 month",
+    "inbox.daysBack.60": "2 months",
+    "inbox.daysBack.90": "3 months",
+    "inbox.empty": "No relevant emails found in the last scan",
+    "inbox.cat.rejection": "Rejection",
+    "inbox.cat.interview_invite": "Interview invite",
+    "inbox.cat.interview_followup": "Interview follow-up",
+    "inbox.cat.offer": "Offer!",
+    "inbox.cat.recruiter_outreach": "Recruiter outreach",
+    "inbox.cat.application_confirmation": "Application confirmed",
+    "inbox.cat.automated_alert": "Automated alert",
+    "inbox.cat.other": "Other",
+    "inbox.needsReply": "Needs reply",
+    "inbox.applyStatus": "Update status to",
+    "inbox.statusUpdated": "Status updated",
+    "inbox.linkedToJob": "Linked to",
+    "inbox.openInGmail": "Open in Gmail",
   },
 } as const;
 

@@ -35,6 +35,23 @@ npm run dev
 
 מגבלות חינם (Gemini 2.5 Flash): ~10 בקשות בדקה, 250 ביום. מספיק בנדיבות לשימוש אישי.
 
+### חיבור Gmail (אופציונלי - מאפשר /inbox)
+
+1. היכנס ל-https://console.cloud.google.com → צור פרויקט (או בחר קיים)
+2. **APIs & Services → Library** → חפש "Gmail API" → **Enable**
+3. **APIs & Services → OAuth consent screen** → User Type: **External** → מלא שם אפליקציה ומייל
+   - Scopes: הוסף `gmail.readonly` ו-`userinfo.email`
+   - Test users: הוסף את המייל שלך
+4. **APIs & Services → Credentials** → Create credentials → **OAuth client ID** → Web application
+   - Authorized redirect URI: `https://cv-agent-opal.vercel.app/api/auth/google/callback`
+   - בלוקאלי: `http://localhost:3000/api/auth/google/callback`
+5. העתק Client ID ו-Client secret
+6. ב-Vercel → Project Settings → Environment Variables, הוסף:
+   - `GOOGLE_OAUTH_CLIENT_ID`
+   - `GOOGLE_OAUTH_CLIENT_SECRET`
+   - `SESSION_SECRET` (32+ תווים אקראיים, למשל `openssl rand -hex 32`)
+7. Deploy מחדש (ה-`vercel git connect` שלנו יעשה זאת אוטומטית בקומיט הבא)
+
 ### חיבור ל-Postgres (Neon)
 
 ```bash

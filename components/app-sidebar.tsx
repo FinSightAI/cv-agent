@@ -11,6 +11,7 @@ import {
   Settings,
   Plug,
   Languages,
+  Inbox,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ const NAV: { href: string; key: Key; icon: React.ComponentType<{ className?: str
   { href: "/cv", key: "nav.cv", icon: FileText },
   { href: "/jobs", key: "nav.jobs", icon: Briefcase },
   { href: "/applications", key: "nav.applications", icon: KanbanSquare },
+  { href: "/inbox", key: "nav.inbox", icon: Inbox },
   { href: "/agent", key: "nav.agent", icon: Sparkles },
   { href: "/connectors", key: "nav.connectors", icon: Plug },
   { href: "/settings", key: "nav.settings", icon: Settings },
