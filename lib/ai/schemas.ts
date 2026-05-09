@@ -102,3 +102,24 @@ export const matchResultSchema = z.object({
 export type ParsedResume = z.infer<typeof parsedResumeSchema>;
 export type ParsedJob = z.infer<typeof parsedJobSchema>;
 export type MatchResult = z.infer<typeof matchResultSchema>;
+
+export const tailoredResumeSchema = z.object({
+  resume: parsedResumeSchema,
+  changes: z.array(
+    z.object({
+      section: z.string(),
+      change: z.string(),
+      kind: z.enum([
+        "summary_rewrite",
+        "bullet_rewrite",
+        "reorder",
+        "keyword_added",
+        "skill_added",
+        "no_change",
+      ]),
+    }),
+  ),
+  notes: z.string().optional(),
+});
+
+export type TailoredResume = z.infer<typeof tailoredResumeSchema>;

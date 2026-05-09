@@ -3,7 +3,12 @@
 // MVP local storage for resume + jobs until DB is connected.
 // Replace with Drizzle queries once DATABASE_URL is set.
 
-import type { ParsedJob, ParsedResume, MatchResult } from "@/lib/ai/schemas";
+import type {
+  ParsedJob,
+  ParsedResume,
+  MatchResult,
+  TailoredResume,
+} from "@/lib/ai/schemas";
 
 const RESUME_KEY = "cv-agent:resume:v1";
 const JOBS_KEY = "cv-agent:jobs:v1";
@@ -22,6 +27,7 @@ export type StoredJob = {
   rawText: string;
   match?: MatchResult;
   coverLetter?: string;
+  tailoredResume?: TailoredResume;
   status:
     | "saved"
     | "drafting"

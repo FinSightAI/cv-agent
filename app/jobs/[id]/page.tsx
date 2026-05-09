@@ -31,12 +31,17 @@ import {
   CheckCircle2,
   AlertTriangle,
   XCircle,
+  Printer,
+  Download,
+  Wand2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { store, type StoredJob } from "@/lib/storage";
-import type { MatchResult } from "@/lib/ai/schemas";
+import type { MatchResult, ParsedResume, TailoredResume } from "@/lib/ai/schemas";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
+import { PrintableResume } from "@/components/printable-resume";
+import { downloadMarkdown, resumeToMarkdown } from "@/lib/cv-export";
 
 const STATUSES: StoredJob["status"][] = [
   "saved",
@@ -215,9 +220,10 @@ export default function JobDetailPage() {
         </div>
       </header>
 
-      <Tabs defaultValue="match">
+      <Tabs defaultValue="match" className="print-hide">
         <TabsList>
           <TabsTrigger value="match">{t("job.tab.match")}</TabsTrigger>
+          <TabsTrigger value="tailor">{t("job.tab.tailor")}</TabsTrigger>
           <TabsTrigger value="letter">{t("job.tab.letter")}</TabsTrigger>
           <TabsTrigger value="details">{t("job.tab.details")}</TabsTrigger>
         </TabsList>
@@ -248,6 +254,10 @@ export default function JobDetailPage() {
           ) : (
             <MatchView match={match} onRefresh={runMatch} loading={matching} />
           )}
+        </TabsContent>
+
+        <TabsContent value="tailor" className="pt-4 space-y-4">
+          <TailorTab job={job} setJob={setJob} />
         </TabsContent>
 
         <TabsContent value="letter" className="pt-4 space-y-4">
@@ -397,6 +407,191 @@ export default function JobDetailPage() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function TailorTab({
+  job,
+  setJob,
+}: {
+  job: StoredJob;
+  setJob: React.Dispatch<React.SetStateAction<StoredJob | null>>;
+}) {
+  const { t, lang } = useLang();
+  const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const tailored = job.tailoredResume;
+
+  async function generate() {
+    const resume = store.getResume();
+    if (!resume) {
+      toast.error(t("tailor.noResume"));
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await fetch("/api/cv/tailor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resume: resume.parsed,
+          job: job.parsed,
+          feedback: feedback.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? t("tailor.failed"));
+      const updated: StoredJob = { ...job, tailoredResume: data.result as TailoredResume };
+      store.saveJob(updated);
+      setJob(updated);
+      toast.success(t("tailor.success"));
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!tailored) {
+    return (
+      <Card className="glass">
+        <CardHeader>
+          <CardTitle>{t("tailor.title")}</CardTitle>
+          <CardDescription>{t("tailor.desc")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={generate} disabled={busy}>
+            {busy ? (
+              <>
+                <Loader2 className="size-4 me-2 animate-spin" />
+                {t("tailor.tailoring")}
+              </>
+            ) : (
+              <>
+                <Wand2 className="size-4 me-2" />
+                {t("tailor.run")}
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const filename = `${job.parsed.company}-${job.parsed.title}`
+    .replace(/[^\p{L}\p{N}\-_. ]/gu, "")
+    .replace(/\s+/g, "-")
+    .slice(0, 80);
+
+  return (
+    <div className="space-y-4">
+      <Card className="glass">
+        <CardHeader>
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <CardTitle className="text-base">{t("tailor.title")}</CardTitle>
+              <CardDescription>{t("tailor.desc")}</CardDescription>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => window.print()}>
+                <Printer className="size-4 me-1" />
+                {t("tailor.print")}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  downloadMarkdown(
+                    `${filename}.md`,
+                    resumeToMarkdown(tailored.resume, lang),
+                  )
+                }
+              >
+                <Download className="size-4 me-1" />
+                {t("tailor.downloadMd")}
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">{t("tailor.feedback")}</label>
+            <Textarea
+              rows={2}
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              placeholder={t("tailor.feedback.placeholder")}
+            />
+          </div>
+          <Button onClick={generate} disabled={busy} variant="secondary">
+            {busy ? (
+              <>
+                <Loader2 className="size-4 me-2 animate-spin" />
+                {t("tailor.tailoring")}
+              </>
+            ) : (
+              <>
+                <Wand2 className="size-4 me-2" />
+                {t("tailor.regenerate")}
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+
+      <ChangesCard tailored={tailored} />
+
+      <Card className="glass">
+        <CardHeader>
+          <CardTitle className="text-base">{t("tailor.preview")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="print-root">
+            <PrintableResume resume={tailored.resume} lang={lang} />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function ChangesCard({ tailored }: { tailored: TailoredResume }) {
+  const { t } = useLang();
+  if (!tailored.changes || tailored.changes.length === 0) {
+    return (
+      <Card className="glass">
+        <CardHeader>
+          <CardTitle className="text-base">{t("tailor.changes")}</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-muted-foreground">
+          {t("tailor.changes.empty")}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="glass">
+      <CardHeader>
+        <CardTitle className="text-base">{t("tailor.changes")}</CardTitle>
+        {tailored.notes && (
+          <CardDescription className="text-xs">{tailored.notes}</CardDescription>
+        )}
+      </CardHeader>
+      <CardContent className="space-y-2 text-sm">
+        {tailored.changes.map((c, i) => (
+          <div key={i} className="flex items-start gap-2">
+            <Badge variant="outline" className="shrink-0 text-[10px]">
+              {t(`tailor.kind.${c.kind}` as Key)}
+            </Badge>
+            <div>
+              <div className="font-medium">{c.section}</div>
+              <div className="text-muted-foreground text-xs">{c.change}</div>
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   );
 }
 

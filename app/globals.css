@@ -142,3 +142,26 @@
     border: 1px solid color-mix(in oklch, var(--border) 100%, transparent);
   }
 }
+
+@media print {
+  body > *:not(.print-root),
+  .print-hide {
+    display: none !important;
+  }
+  .print-root {
+    background: white !important;
+  }
+  .print-root * {
+    color: black !important;
+    background: white !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+    box-shadow: none !important;
+  }
+  .print-root a {
+    text-decoration: underline;
+  }
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}
