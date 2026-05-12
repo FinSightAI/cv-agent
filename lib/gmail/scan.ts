@@ -23,7 +23,7 @@ export async function listMessages(
     q: query,
     maxResults,
   });
-  const ids = (list.data.messages ?? []).map((m) => m.id!).filter(Boolean);
+  const ids = (list.data.messages ?? []).map((m: import("googleapis").gmail_v1.Schema$Message) => m.id!).filter(Boolean);
   if (ids.length === 0) return [];
 
   // Fetch in parallel; cap concurrency lightly.
@@ -31,7 +31,7 @@ export async function listMessages(
   for (let i = 0; i < ids.length; i += 8) {
     const batch = ids.slice(i, i + 8);
     const msgs = await Promise.all(
-      batch.map((id) =>
+      batch.map((id: string) =>
         gmail.users.messages.get({
           userId: "me",
           id,

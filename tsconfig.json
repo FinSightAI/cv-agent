@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "next/font/google": ["./node_modules/next/dist/compiled/@next/font/dist/google"]
     }
   },
   "include": [

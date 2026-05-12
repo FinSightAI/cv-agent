@@ -14,18 +14,13 @@ import { Sparkles, Send, Loader2, User, Bot, RotateCcw } from "lucide-react";
 import { useLang } from "@/components/lang-provider";
 import { store, type StoredJob } from "@/lib/storage";
 import type { ParsedResume } from "@/lib/ai/schemas";
+import type { Key } from "@/lib/i18n/dictionary";
 
-const SUGGESTIONS_HE = [
-  "סכם לי את כל ההגשות הפעילות",
-  "איזה משרות הכי כדאי לי לפנות אליהן עכשיו?",
-  "למה כדאי לעשות follow-up השבוע?",
-  "מה החולשות העיקריות בקורות החיים שלי?",
-];
-const SUGGESTIONS_EN = [
-  "Summarize all my active applications",
-  "Which jobs should I prioritize right now?",
-  "Who should I follow up with this week?",
-  "What are the main weaknesses in my resume?",
+const SUGGESTION_KEYS: Key[] = [
+  "agent.suggestion.1",
+  "agent.suggestion.2",
+  "agent.suggestion.3",
+  "agent.suggestion.4",
 ];
 
 export default function AgentPage() {
@@ -81,7 +76,7 @@ export default function AgentPage() {
   }, [messages]);
 
   const busy = status === "submitted" || status === "streaming";
-  const suggestions = lang === "he" ? SUGGESTIONS_HE : SUGGESTIONS_EN;
+  const suggestions = SUGGESTION_KEYS.map((k) => t(k));
 
   function handleSend(text?: string) {
     const value = (text ?? input).trim();
@@ -113,7 +108,7 @@ export default function AgentPage() {
               disabled={busy}
             >
               <RotateCcw className="size-3.5 me-1" />
-              {lang === "he" ? "איפוס" : "Reset"}
+              {t("agent.reset")}
             </Button>
           )}
         </div>
@@ -130,9 +125,7 @@ export default function AgentPage() {
                 <Bot className="size-8 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground text-center max-w-md">
-                {lang === "he"
-                  ? "אני יודע מה כתוב ב-CV שלך, אילו משרות שמרת, וההעדפות שלך. שאל אותי כל דבר."
-                  : "I know your resume, all your saved jobs, and your preferences. Ask me anything."}
+                {t("agent.greeting")}
               </p>
               <div className="grid sm:grid-cols-2 gap-2 w-full max-w-xl">
                 {suggestions.map((s) => (
@@ -147,10 +140,7 @@ export default function AgentPage() {
               </div>
               {!resume && (
                 <p className="text-xs text-amber-500 mt-2">
-                  💡{" "}
-                  {lang === "he"
-                    ? "טיפ: העלה קורות חיים תחילה כדי שהסוכן יוכל לעזור באופן אישי"
-                    : "Tip: upload your resume first so the agent can give personalized advice"}
+                  💡 {t("agent.tip")}
                 </p>
               )}
             </div>
@@ -197,11 +187,7 @@ export default function AgentPage() {
                   handleSend();
                 }
               }}
-              placeholder={
-                lang === "he"
-                  ? "כתוב הודעה... (Enter לשליחה, Shift+Enter לשורה חדשה)"
-                  : "Type a message... (Enter to send, Shift+Enter for newline)"
-              }
+              placeholder={t("agent.placeholder")}
               rows={1}
               className="min-h-[44px] max-h-32 resize-none flex-1"
               disabled={busy}

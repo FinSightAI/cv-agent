@@ -19,6 +19,7 @@ import { Sparkles, Loader2 } from "lucide-react";
 import { store } from "@/lib/storage";
 import { nanoid } from "nanoid";
 import { useLang } from "@/components/lang-provider";
+import { aiFetchJson } from "@/lib/utils";
 
 export default function NewJobPage() {
   const { t } = useLang();
@@ -34,16 +35,19 @@ export default function NewJobPage() {
     }
     setBusy(true);
     try {
-      const res = await fetch("/api/jobs/parse", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url || undefined, text: text || undefined }),
-      });
-      if (!res.ok) {
-        const { error } = await res.json().catch(() => ({ error: "Parse failed" }));
-        throw new Error(error);
-      }
-      const data = await res.json();
+      const data = await aiFetchJson<{
+        url?: string;
+        parsed: import("@/lib/ai/schemas").ParsedJob;
+        rawText: string;
+      }>(
+        "/api/jobs/parse",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: url || undefined, text: text || undefined }),
+        },
+        { t, fallback: "Parse failed" },
+      );
       const id = nanoid(10);
       store.saveJob({
         id,

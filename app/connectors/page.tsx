@@ -586,8 +586,7 @@ function JobCard({
       </CardHeader>
       <CardContent className="flex items-center justify-between">
         <Badge variant="outline" className="text-[10px]">
-          {(lang === "he" ? "מקור: " : "via ") +
-            (job.source.charAt(0).toUpperCase() + job.source.slice(1))}
+          {t("discover.via") + " " + (job.source.charAt(0).toUpperCase() + job.source.slice(1))}
         </Badge>
         {imported ? (
           <Badge className="gap-1">

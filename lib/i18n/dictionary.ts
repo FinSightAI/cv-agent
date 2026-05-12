@@ -346,6 +346,49 @@ export const dictionary = {
     "tailor.noResume": "העלה קורות חיים תחילה",
     "tailor.failed": "התאמת CV נכשלה",
     "tailor.success": "ה-CV מוכן",
+
+    // Agent chat
+    "agent.reset": "איפוס",
+    "agent.greeting": "אני יודע מה כתוב ב-CV שלך, אילו משרות שמרת, וההעדפות שלך. שאל אותי כל דבר.",
+    "agent.tip": "טיפ: העלה קורות חיים תחילה כדי שהסוכן יוכל לעזור באופן אישי",
+    "agent.placeholder": "כתוב הודעה... (Enter לשליחה, Shift+Enter לשורה חדשה)",
+    "agent.suggestion.1": "סכם לי את כל ההגשות הפעילות",
+    "agent.suggestion.2": "איזה משרות הכי כדאי לי לפנות אליהן עכשיו?",
+    "agent.suggestion.3": "למה כדאי לעשות follow-up השבוע?",
+    "agent.suggestion.4": "מה החולשות העיקריות בקורות החיים שלי?",
+
+    // Inbox
+    "inbox.scanned": "מיילים נסרקו",
+
+    // Connectors discover source label
+    "discover.via": "מקור:",
+
+    // Printable resume sections
+    "resume.section.summary": "תקציר",
+    "resume.section.skills": "כישורים",
+    "resume.section.experience": "ניסיון תעסוקתי",
+    "resume.section.education": "השכלה",
+    "resume.section.certifications": "הסמכות",
+    "resume.section.projects": "פרויקטים",
+    "resume.section.languages": "שפות",
+    "resume.present": "היום",
+
+    // Error / 404
+    "error.title": "משהו השתבש",
+    "error.desc": "אירעה שגיאה לא צפויה. תוכל לנסות שוב או לחזור לדף הבית.",
+    "error.retry": "נסה שוב",
+    "notFound.title": "הדף לא נמצא",
+    "notFound.desc": "הקישור שאליו הגעת לא קיים או הוסר.",
+    "common.backHome": "חזרה לדף הבית",
+
+    // Loading skeletons
+    "loading.matching": "מנתח התאמה...",
+    "loading.tailoring": "מתאים את ה-CV...",
+    "loading.coverLetter": "כותב מכתב מקדים...",
+    "loading.aiHint": "זה יכול לקחת 20-30 שניות",
+
+    // Rate limit
+    "error.rateLimit": "יותר מדי בקשות. נסה שוב בעוד דקה.",
   },
   en: {
     "brand.name": "CV Agent",
@@ -679,6 +722,49 @@ export const dictionary = {
     "tailor.noResume": "Upload a resume first",
     "tailor.failed": "Tailoring failed",
     "tailor.success": "Tailored CV ready",
+
+    // Agent chat
+    "agent.reset": "Reset",
+    "agent.greeting": "I know your resume, all your saved jobs, and your preferences. Ask me anything.",
+    "agent.tip": "Tip: upload your resume first so the agent can give personalized advice",
+    "agent.placeholder": "Type a message… (Enter to send, Shift+Enter for newline)",
+    "agent.suggestion.1": "Summarize all my active applications",
+    "agent.suggestion.2": "Which jobs should I prioritize right now?",
+    "agent.suggestion.3": "Who should I follow up with this week?",
+    "agent.suggestion.4": "What are the main weaknesses in my resume?",
+
+    // Inbox
+    "inbox.scanned": "emails scanned",
+
+    // Connectors discover source label
+    "discover.via": "via",
+
+    // Printable resume sections
+    "resume.section.summary": "Summary",
+    "resume.section.skills": "Skills",
+    "resume.section.experience": "Experience",
+    "resume.section.education": "Education",
+    "resume.section.certifications": "Certifications",
+    "resume.section.projects": "Projects",
+    "resume.section.languages": "Languages",
+    "resume.present": "Present",
+
+    // Error / 404
+    "error.title": "Something went wrong",
+    "error.desc": "An unexpected error occurred. You can try again or return home.",
+    "error.retry": "Try again",
+    "notFound.title": "Page not found",
+    "notFound.desc": "The link you followed doesn't exist or has been removed.",
+    "common.backHome": "Back to home",
+
+    // Loading skeletons
+    "loading.matching": "Analyzing match...",
+    "loading.tailoring": "Tailoring your resume...",
+    "loading.coverLetter": "Writing cover letter...",
+    "loading.aiHint": "This can take 20-30 seconds",
+
+    // Rate limit
+    "error.rateLimit": "Too many requests. Try again in a minute.",
   },
 } as const;
 

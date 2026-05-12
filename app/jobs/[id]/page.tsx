@@ -42,6 +42,8 @@ import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
 import { PrintableResume } from "@/components/printable-resume";
 import { downloadMarkdown, resumeToMarkdown } from "@/lib/cv-export";
+import { AILoadingSkeleton } from "@/components/ai-loading-skeleton";
+import { aiFetchJson } from "@/lib/utils";
 
 const STATUSES: StoredJob["status"][] = [
   "saved",
@@ -92,13 +94,15 @@ export default function JobDetailPage() {
     }
     setMatching(true);
     try {
-      const res = await fetch("/api/match", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume: resume.parsed, job: job.parsed }),
-      });
-      if (!res.ok) throw new Error(t("job.match.failed"));
-      const { result } = (await res.json()) as { result: MatchResult };
+      const { result } = await aiFetchJson<{ result: MatchResult }>(
+        "/api/match",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ resume: resume.parsed, job: job.parsed }),
+        },
+        { t, fallback: t("job.match.failed") },
+      );
       const updated = { ...job, match: result };
       store.saveJob(updated);
       setJob(updated);
@@ -131,6 +135,7 @@ export default function JobDetailPage() {
           feedback: feedback.trim() || undefined,
         }),
       });
+      if (res.status === 429) throw new Error(t("error.rateLimit"));
       if (!res.ok || !res.body) throw new Error(t("job.letter.failed"));
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -229,7 +234,9 @@ export default function JobDetailPage() {
         </TabsList>
 
         <TabsContent value="match" className="pt-4 space-y-4">
-          {!match ? (
+          {matching && !match ? (
+            <AILoadingSkeleton kind="match" />
+          ) : !match ? (
             <Card className="glass">
               <CardHeader>
                 <CardTitle>{t("job.match.title")}</CardTitle>
@@ -237,17 +244,8 @@ export default function JobDetailPage() {
               </CardHeader>
               <CardContent>
                 <Button onClick={runMatch} disabled={matching}>
-                  {matching ? (
-                    <>
-                      <Loader2 className="size-4 me-2 animate-spin" />
-                      {t("cv.analyzing")}
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="size-4 me-2" />
-                      {t("job.match.run")}
-                    </>
-                  )}
+                  <Sparkles className="size-4 me-2" />
+                  {t("job.match.run")}
                 </Button>
               </CardContent>
             </Card>
@@ -335,6 +333,7 @@ export default function JobDetailPage() {
                   </Button>
                 )}
               </div>
+              {generating && !letter && <AILoadingSkeleton kind="letter" />}
               {letter && (
                 <Card className="bg-muted/30 border-border/50">
                   <CardContent className="pt-6 whitespace-pre-wrap text-sm leading-relaxed">
@@ -430,18 +429,20 @@ function TailorTab({
     }
     setBusy(true);
     try {
-      const res = await fetch("/api/cv/tailor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          resume: resume.parsed,
-          job: job.parsed,
-          feedback: feedback.trim() || undefined,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? t("tailor.failed"));
-      const updated: StoredJob = { ...job, tailoredResume: data.result as TailoredResume };
+      const data = await aiFetchJson<{ result: TailoredResume }>(
+        "/api/cv/tailor",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            resume: resume.parsed,
+            job: job.parsed,
+            feedback: feedback.trim() || undefined,
+          }),
+        },
+        { t, fallback: t("tailor.failed") },
+      );
+      const updated: StoredJob = { ...job, tailoredResume: data.result };
       store.saveJob(updated);
       setJob(updated);
       toast.success(t("tailor.success"));
@@ -453,6 +454,7 @@ function TailorTab({
   }
 
   if (!tailored) {
+    if (busy) return <AILoadingSkeleton kind="tailor" />;
     return (
       <Card className="glass">
         <CardHeader>
@@ -461,17 +463,8 @@ function TailorTab({
         </CardHeader>
         <CardContent>
           <Button onClick={generate} disabled={busy}>
-            {busy ? (
-              <>
-                <Loader2 className="size-4 me-2 animate-spin" />
-                {t("tailor.tailoring")}
-              </>
-            ) : (
-              <>
-                <Wand2 className="size-4 me-2" />
-                {t("tailor.run")}
-              </>
-            )}
+            <Wand2 className="size-4 me-2" />
+            {t("tailor.run")}
           </Button>
         </CardContent>
       </Card>

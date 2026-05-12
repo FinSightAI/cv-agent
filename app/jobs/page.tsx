@@ -15,6 +15,7 @@ import { Plus, Briefcase } from "lucide-react";
 import { store, type StoredJob } from "@/lib/storage";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
+import { formatDate } from "@/lib/utils";
 
 export default function JobsPage() {
   const { t, lang } = useLang();
@@ -91,11 +92,7 @@ export default function JobsPage() {
                 </CardHeader>
                 <CardContent className="flex items-center justify-between text-xs text-muted-foreground">
                   <Badge variant="outline">{t(statusKey(j.status))}</Badge>
-                  <span>
-                    {new Date(j.createdAt).toLocaleDateString(
-                      lang === "he" ? "he-IL" : "en-US",
-                    )}
-                  </span>
+                  <span>{formatDate(j.createdAt, lang)}</span>
                 </CardContent>
               </Card>
             </Link>

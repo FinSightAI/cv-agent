@@ -37,7 +37,8 @@ import {
 import { toast } from "sonner";
 import { useLang } from "@/components/lang-provider";
 import { store, type StoredJob } from "@/lib/storage";
-import type { Key } from "@/lib/i18n/dictionary";
+import type { Key, Lang } from "@/lib/i18n/dictionary";
+import { getLocale } from "@/lib/utils";
 
 type Classification = {
   messageId: string;
@@ -131,11 +132,12 @@ export default function InboxPage() {
           limit: 25,
         }),
       });
+      if (res.status === 429) throw new Error(t("error.rateLimit"));
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Scan failed");
       setMessages(data.messages ?? []);
       setClassifications(data.classifications ?? []);
-      toast.success(`${data.messages?.length ?? 0} ${lang === "he" ? "מיילים נסרקו" : "emails scanned"}`);
+      toast.success(`${data.messages?.length ?? 0} ${t("inbox.scanned")}`);
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
@@ -418,11 +420,11 @@ function cleanFrom(from: string): string {
   return m?.[1]?.trim() ?? from;
 }
 
-function formatDate(d: string | undefined, lang: "he" | "en"): string {
+function formatDate(d: string | undefined, lang: Lang): string {
   if (!d) return "";
   const dt = new Date(d);
   if (Number.isNaN(dt.getTime())) return d;
-  return dt.toLocaleDateString(lang === "he" ? "he-IL" : "en-US", {
+  return dt.toLocaleDateString(getLocale(lang), {
     month: "short",
     day: "numeric",
   });

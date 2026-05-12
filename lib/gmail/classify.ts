@@ -1,4 +1,5 @@
 import { generateObject } from "ai";
+import { dataBlock, withInjectionGuard } from "@/lib/ai/safe-prompt";
 import { z } from "zod";
 import { MODEL_FAST } from "@/lib/ai/gateway";
 import type { RawEmail } from "./scan";
@@ -70,17 +71,16 @@ export async function classifyEmail(
   const { object } = await generateObject({
     model: MODEL_FAST,
     schema: classificationSchema,
-    system: SYSTEM,
+    system: withInjectionGuard(SYSTEM),
     prompt: [
-      "## User's saved jobs (id, title, company, status):",
-      JSON.stringify(jobs, null, 2),
+      dataBlock("user_saved_jobs", jobs),
       "",
-      "## Email to classify:",
-      `From: ${email.from}`,
-      `Subject: ${email.subject}`,
-      `Date: ${email.date ?? ""}`,
-      "",
-      email.body || email.snippet,
+      dataBlock("email_to_classify", {
+        from: email.from,
+        subject: email.subject,
+        date: email.date ?? "",
+        body: email.body || email.snippet,
+      }),
     ].join("\n"),
   });
   return object;

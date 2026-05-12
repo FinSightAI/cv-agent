@@ -4,6 +4,12 @@ import { COVER_LETTER_SYSTEM } from "@/lib/ai/prompts";
 import { MODEL_REASONING } from "@/lib/ai/gateway";
 import { parsedJobSchema, parsedResumeSchema } from "@/lib/ai/schemas";
 import { z } from "zod";
+import {
+  checkRateLimit,
+  rateLimitStreamResponse,
+  HEAVY_AI_LIMIT,
+} from "@/lib/rate-limit";
+import { dataBlock, withInjectionGuard } from "@/lib/ai/safe-prompt";
 
 export const runtime = "nodejs";
 export const maxDuration = 90;
@@ -15,10 +21,13 @@ const inputSchema = z.object({
   tone: z
     .enum(["professional", "warm", "concise", "enthusiastic"])
     .default("professional"),
-  feedback: z.string().optional(),
+  feedback: z.string().max(2000).optional(),
 });
 
 export async function POST(req: NextRequest) {
+  const rl = checkRateLimit(req, "cover-letter", HEAVY_AI_LIMIT);
+  if (!rl.ok) return rateLimitStreamResponse(rl.retryAfter);
+
   const body = await req.json();
   const parsed = inputSchema.safeParse(body);
   if (!parsed.success) {
@@ -31,17 +40,15 @@ export async function POST(req: NextRequest) {
 
   const result = streamText({
     model: MODEL_REASONING,
-    system: COVER_LETTER_SYSTEM,
+    system: withInjectionGuard(COVER_LETTER_SYSTEM),
     prompt: [
       `Language: ${language === "he" ? "Hebrew" : "English"}`,
       `Tone: ${tone}`,
-      feedback ? `Revision feedback from previous draft: ${feedback}` : "",
       "",
-      "## Candidate resume (JSON):",
-      JSON.stringify(resume, null, 2),
+      dataBlock("candidate_resume", resume),
       "",
-      "## Job listing (JSON):",
-      JSON.stringify(job, null, 2),
+      dataBlock("job_listing", job),
+      feedback ? "\n" + dataBlock("revision_feedback", feedback) : "",
     ]
       .filter(Boolean)
       .join("\n"),

@@ -17,10 +17,46 @@ const inter = Inter({
   display: "swap",
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://cv-agent-opal.vercel.app";
+
 export const metadata: Metadata = {
-  title: "CV Agent — Smart job-hunting copilot",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "CV Agent — Smart job-hunting copilot",
+    template: "%s · CV Agent",
+  },
   description:
     "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
+  applicationName: "CV Agent",
+  authors: [{ name: "Ofir Shamir" }],
+  keywords: [
+    "job search",
+    "resume",
+    "CV",
+    "cover letter",
+    "AI",
+    "Gemini",
+    "Hebrew",
+    "Israel jobs",
+  ],
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "CV Agent",
+    title: "CV Agent — Smart job-hunting copilot",
+    description:
+      "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
+    locale: "he_IL",
+    alternateLocale: ["en_US"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CV Agent — Smart job-hunting copilot",
+    description:
+      "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ParsedResume } from "@/lib/ai/schemas";
+import { dictionary, type Lang } from "@/lib/i18n/dictionary";
 
 // Print-optimized resume. A4-friendly margins, monochrome, web-safe fonts.
 // Use with media print rules so chrome (sidebar/buttons) hides on print.
@@ -9,10 +10,11 @@ export function PrintableResume({
   lang,
 }: {
   resume: ParsedResume;
-  lang: "he" | "en";
+  lang: Lang;
 }) {
   const dir = lang === "he" ? "rtl" : "ltr";
-  const todayStr = lang === "he" ? "היום" : "Present";
+  const t = (k: keyof (typeof dictionary)["he"]) => dictionary[lang][k];
+  const todayStr = t("resume.present");
 
   return (
     <article
@@ -40,7 +42,7 @@ export function PrintableResume({
       </header>
 
       {resume.summary && (
-        <Section title={lang === "he" ? "תקציר" : "Summary"}>
+        <Section title={t("resume.section.summary")}>
           <p className="text-sm leading-relaxed whitespace-pre-wrap">
             {resume.summary}
           </p>
@@ -48,7 +50,7 @@ export function PrintableResume({
       )}
 
       {resume.skills && resume.skills.length > 0 && (
-        <Section title={lang === "he" ? "כישורים" : "Skills"}>
+        <Section title={t("resume.section.skills")}>
           <p className="text-sm leading-relaxed">
             {resume.skills.join(" · ")}
           </p>
@@ -56,7 +58,7 @@ export function PrintableResume({
       )}
 
       {resume.experience && resume.experience.length > 0 && (
-        <Section title={lang === "he" ? "ניסיון תעסוקתי" : "Experience"}>
+        <Section title={t("resume.section.experience")}>
           <div className="space-y-3">
             {resume.experience.map((exp, i) => (
               <div key={i}>
@@ -83,7 +85,7 @@ export function PrintableResume({
       )}
 
       {resume.education && resume.education.length > 0 && (
-        <Section title={lang === "he" ? "השכלה" : "Education"}>
+        <Section title={t("resume.section.education")}>
           <div className="space-y-2">
             {resume.education.map((ed, i) => (
               <div key={i} className="flex items-baseline justify-between gap-3 flex-wrap text-sm">
@@ -105,7 +107,7 @@ export function PrintableResume({
       )}
 
       {resume.certifications && resume.certifications.length > 0 && (
-        <Section title={lang === "he" ? "הסמכות" : "Certifications"}>
+        <Section title={t("resume.section.certifications")}>
           <ul className="list-disc ps-5 text-sm space-y-0.5">
             {resume.certifications.map((c, i) => (
               <li key={i}>
@@ -119,7 +121,7 @@ export function PrintableResume({
       )}
 
       {resume.projects && resume.projects.length > 0 && (
-        <Section title={lang === "he" ? "פרויקטים" : "Projects"}>
+        <Section title={t("resume.section.projects")}>
           <ul className="list-disc ps-5 text-sm space-y-0.5">
             {resume.projects.map((p, i) => (
               <li key={i}>
@@ -140,7 +142,7 @@ export function PrintableResume({
       )}
 
       {resume.languages && resume.languages.length > 0 && (
-        <Section title={lang === "he" ? "שפות" : "Languages"}>
+        <Section title={t("resume.section.languages")}>
           <p className="text-sm">
             {resume.languages
               .map((l) => `${l.name}${l.level ? ` (${l.level})` : ""}`)

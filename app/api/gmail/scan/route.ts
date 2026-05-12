@@ -4,9 +4,13 @@ import { GMAIL_COOKIE, decryptFromCookieValue } from "@/lib/gmail/session";
 import { clientWithRefreshToken } from "@/lib/gmail/oauth";
 import { buildQuery, listMessages, type RawEmail } from "@/lib/gmail/scan";
 import { classifyEmail, type EmailClassification } from "@/lib/gmail/classify";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const maxDuration = 90;
+
+// Tighter limit: each scan invokes the model up to `limit` times (25 max).
+const SCAN_LIMIT = { max: 2, windowMs: 60_000 };
 
 const inputSchema = z.object({
   jobs: z.array(
@@ -22,6 +26,9 @@ const inputSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const rl = checkRateLimit(req, "gmail-scan", SCAN_LIMIT);
+  if (!rl.ok) return rateLimitResponse(rl.retryAfter);
+
   const cookieValue = req.cookies.get(GMAIL_COOKIE)?.value;
   if (!cookieValue) {
     return NextResponse.json({ error: "Gmail not connected" }, { status: 401 });

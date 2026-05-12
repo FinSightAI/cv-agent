@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { store, type StoredJob } from "@/lib/storage";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
+import { formatDate } from "@/lib/utils";
 
 const COLUMNS: { status: StoredJob["status"]; key: Key }[] = [
   { status: "saved", key: "status.savedFem" },
@@ -79,11 +80,7 @@ export default function ApplicationsPage() {
                         ) : (
                           <span />
                         )}
-                        <span>
-                          {new Date(j.createdAt).toLocaleDateString(
-                            lang === "he" ? "he-IL" : "en-US",
-                          )}
-                        </span>
+                        <span>{formatDate(j.createdAt, lang)}</span>
                       </CardContent>
                     </Card>
                   </Link>

@@ -3,6 +3,12 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { MODEL_REASONING } from "@/lib/ai/gateway";
 import { parsedJobSchema, parsedResumeSchema } from "@/lib/ai/schemas";
 import { z } from "zod";
+import {
+  checkRateLimit,
+  rateLimitStreamResponse,
+  DEFAULT_AI_LIMIT,
+} from "@/lib/rate-limit";
+import { dataBlock, withInjectionGuard } from "@/lib/ai/safe-prompt";
 
 export const runtime = "nodejs";
 export const maxDuration = 90;
@@ -20,7 +26,7 @@ const jobSnapshotSchema = z.object({
 });
 
 const inputSchema = z.object({
-  messages: z.array(z.any()),
+  messages: z.array(z.unknown()),
   resume: parsedResumeSchema.nullable().optional(),
   jobs: z.array(jobSnapshotSchema).optional(),
   preferences: z.unknown().optional(),
@@ -50,6 +56,9 @@ Rules:
 - Keep responses tight. No rambling.`;
 
 export async function POST(req: NextRequest) {
+  const rl = checkRateLimit(req, "agent", DEFAULT_AI_LIMIT);
+  if (!rl.ok) return rateLimitStreamResponse(rl.retryAfter);
+
   const body = await req.json().catch(() => null);
   const parsed = inputSchema.safeParse(body);
   if (!parsed.success) {
@@ -63,9 +72,9 @@ export async function POST(req: NextRequest) {
   const contextSections: string[] = [];
 
   if (resume) {
-    contextSections.push("## User resume\n```json\n" + JSON.stringify(resume, null, 2) + "\n```");
+    contextSections.push(dataBlock("user_resume", resume));
   } else {
-    contextSections.push("## User resume\n(not uploaded yet)");
+    contextSections.push("user_resume: (not uploaded yet)");
   }
 
   if (jobs && jobs.length > 0) {
@@ -83,24 +92,20 @@ export async function POST(req: NextRequest) {
       createdAt: j.createdAt,
       appliedAt: j.appliedAt,
     }));
-    contextSections.push(
-      "## Saved jobs (" + jobs.length + ")\n```json\n" + JSON.stringify(summarized, null, 2) + "\n```",
-    );
+    contextSections.push(dataBlock(`saved_jobs_${jobs.length}`, summarized));
   } else {
-    contextSections.push("## Saved jobs\n(none yet)");
+    contextSections.push("saved_jobs: (none yet)");
   }
 
   if (preferences && Object.keys(preferences as object).length > 0) {
-    contextSections.push(
-      "## Preferences\n```json\n" + JSON.stringify(preferences, null, 2) + "\n```",
-    );
+    contextSections.push(dataBlock("preferences", preferences));
   }
 
   const modelMessages = await convertToModelMessages(messages as UIMessage[]);
 
   const result = streamText({
     model: MODEL_REASONING,
-    system: SYSTEM(language) + "\n\n" + contextSections.join("\n\n"),
+    system: withInjectionGuard(SYSTEM(language)) + "\n\n" + contextSections.join("\n\n"),
     messages: modelMessages,
   });
 
