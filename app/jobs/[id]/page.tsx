@@ -34,10 +34,18 @@ import {
   Printer,
   Download,
   Wand2,
+  Lightbulb,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { store, type StoredJob } from "@/lib/storage";
-import type { MatchResult, ParsedResume, TailoredResume } from "@/lib/ai/schemas";
+import type {
+  CVSuggestion,
+  CVSuggestions,
+  MatchResult,
+  ParsedResume,
+  TailoredResume,
+} from "@/lib/ai/schemas";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
 import { PrintableResume } from "@/components/printable-resume";
@@ -228,6 +236,7 @@ export default function JobDetailPage() {
       <Tabs defaultValue="match" className="print-hide">
         <TabsList>
           <TabsTrigger value="match">{t("job.tab.match")}</TabsTrigger>
+          <TabsTrigger value="suggest">{t("job.tab.suggest")}</TabsTrigger>
           <TabsTrigger value="tailor">{t("job.tab.tailor")}</TabsTrigger>
           <TabsTrigger value="letter">{t("job.tab.letter")}</TabsTrigger>
           <TabsTrigger value="details">{t("job.tab.details")}</TabsTrigger>
@@ -252,6 +261,10 @@ export default function JobDetailPage() {
           ) : (
             <MatchView match={match} onRefresh={runMatch} loading={matching} />
           )}
+        </TabsContent>
+
+        <TabsContent value="suggest" className="pt-4 space-y-4">
+          <SuggestTab job={job} setJob={setJob} />
         </TabsContent>
 
         <TabsContent value="tailor" className="pt-4 space-y-4">
@@ -734,5 +747,217 @@ function MatchView({
         </Card>
       )}
     </div>
+  );
+}
+
+function SuggestTab({
+  job,
+  setJob,
+}: {
+  job: StoredJob;
+  setJob: React.Dispatch<React.SetStateAction<StoredJob | null>>;
+}) {
+  const { t } = useLang();
+  const [busy, setBusy] = useState(false);
+  const suggestions = job.suggestions;
+
+  async function generate() {
+    const resume = store.getResume();
+    if (!resume) {
+      toast.error(t("suggest.noResume"));
+      return;
+    }
+    setBusy(true);
+    try {
+      const data = await aiFetchJson<{ result: CVSuggestions }>(
+        "/api/cv/suggestions",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ resume: resume.parsed, job: job.parsed }),
+        },
+        { t, fallback: t("suggest.failed") },
+      );
+      const updated: StoredJob = { ...job, suggestions: data.result };
+      store.saveJob(updated);
+      setJob(updated);
+      toast.success(t("suggest.success"));
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!suggestions) {
+    if (busy) return <AILoadingSkeleton kind="match" />;
+    return (
+      <Card className="glass">
+        <CardHeader>
+          <CardTitle>{t("suggest.title")}</CardTitle>
+          <CardDescription>{t("suggest.desc")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={generate} disabled={busy}>
+            <Lightbulb className="size-4 me-2" />
+            {t("suggest.run")}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const byPriority: Record<"high" | "medium" | "low", CVSuggestion[]> = {
+    high: [],
+    medium: [],
+    low: [],
+  };
+  for (const s of suggestions.suggestions) byPriority[s.priority].push(s);
+
+  return (
+    <div className="space-y-4">
+      <Card className="glass">
+        <CardHeader>
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div className="space-y-1 min-w-0">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Lightbulb className="size-4 text-amber-400" />
+                {t("suggest.overallNote")}
+              </CardTitle>
+              <CardDescription>{suggestions.overallNote}</CardDescription>
+            </div>
+            <Button size="sm" variant="outline" onClick={generate} disabled={busy}>
+              {busy ? (
+                <Loader2 className="size-4 me-2 animate-spin" />
+              ) : (
+                <Sparkles className="size-4 me-2" />
+              )}
+              {t("suggest.regenerate")}
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {suggestions.suggestions.length === 0 && (
+        <Card className="glass">
+          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+            {t("suggest.empty")}
+          </CardContent>
+        </Card>
+      )}
+
+      {(["high", "medium", "low"] as const).map((p) => {
+        const list = byPriority[p];
+        if (list.length === 0) return null;
+        return (
+          <div key={p} className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {t(`suggest.priority.${p}` as Key)} · {list.length}
+            </h3>
+            {list.map((s, i) => (
+              <SuggestionCard key={`${p}-${i}`} s={s} />
+            ))}
+          </div>
+        );
+      })}
+
+      {suggestions.strengthsToEmphasize.length > 0 && (
+        <Card className="glass">
+          <CardHeader>
+            <CardTitle className="text-base">{t("suggest.strengths")}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            {suggestions.strengthsToEmphasize.map((s, i) => (
+              <Badge key={i} variant="secondary">
+                {s}
+              </Badge>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {suggestions.missingKeywords.length > 0 && (
+        <Card className="glass border-amber-500/30">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <AlertTriangle className="size-4 text-amber-400" />
+              {t("suggest.missingKeywords")}
+            </CardTitle>
+            <CardDescription>
+              {t("suggest.missingKeywords.hint")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            {suggestions.missingKeywords.map((k) => (
+              <Badge key={k} variant="outline">
+                {k}
+              </Badge>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+function SuggestionCard({ s }: { s: CVSuggestion }) {
+  const { t } = useLang();
+  return (
+    <Card className="glass">
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Badge variant="default">{t(`suggest.type.${s.type}` as Key)}</Badge>
+          <Badge variant="outline">{t(`suggest.section.${s.section}` as Key)}</Badge>
+          <span className="text-xs text-muted-foreground">{s.target}</span>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3 text-sm">
+        {s.currentText && (
+          <div className="grid gap-2 md:grid-cols-[auto_1fr_auto_1fr] items-start">
+            <span className="text-xs text-muted-foreground pt-1">
+              {t("suggest.currentLabel")}
+            </span>
+            <div className="rounded-md border border-border/50 bg-muted/30 px-3 py-2 line-through opacity-70">
+              {s.currentText}
+            </div>
+            <ArrowRight className="size-4 text-muted-foreground hidden md:block mt-2" />
+            <div className="rounded-md border border-primary/30 bg-primary/5 px-3 py-2">
+              {s.suggestedText}
+            </div>
+          </div>
+        )}
+        {!s.currentText && (
+          <div className="rounded-md border border-primary/30 bg-primary/5 px-3 py-2">
+            {s.suggestedText}
+          </div>
+        )}
+        <p className="text-xs text-muted-foreground">
+          <span className="font-medium">{t("suggest.reasonLabel")}: </span>
+          {s.reason}
+        </p>
+        {s.matchedKeywords.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {s.matchedKeywords.map((k) => (
+              <Badge key={k} variant="secondary" className="text-[10px]">
+                {k}
+              </Badge>
+            ))}
+          </div>
+        )}
+        <div>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              navigator.clipboard.writeText(s.suggestedText);
+              toast.success(t("common.copied"));
+            }}
+          >
+            <Copy className="size-3 me-1.5" />
+            {t("suggest.copySuggested")}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -7,5 +7,5 @@ export type ConnectorJob = {
   url: string;
   description?: string;
   postedAt?: string;
-  source: "greenhouse" | "lever" | "ashby" | "workday" | "linkedin";
+  source: "greenhouse" | "lever" | "ashby" | "workday" | "linkedin" | "alljobs";
 };

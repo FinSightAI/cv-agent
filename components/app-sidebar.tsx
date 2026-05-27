@@ -12,6 +12,7 @@ import {
   Plug,
   Languages,
   Inbox,
+  HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ const NAV: { href: string; key: Key; icon: React.ComponentType<{ className?: str
   { href: "/agent", key: "nav.agent", icon: Sparkles },
   { href: "/connectors", key: "nav.connectors", icon: Plug },
   { href: "/settings", key: "nav.settings", icon: Settings },
+  { href: "/help", key: "nav.help", icon: HelpCircle },
 ];
 
 export function AppSidebar() {

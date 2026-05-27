@@ -123,3 +123,43 @@ export const tailoredResumeSchema = z.object({
 });
 
 export type TailoredResume = z.infer<typeof tailoredResumeSchema>;
+
+export const cvSuggestionSchema = z.object({
+  type: z.enum([
+    "add_skill",
+    "rewrite_bullet",
+    "add_keyword",
+    "quantify",
+    "reword_headline",
+    "rewrite_summary",
+    "reorder",
+    "add_project_mention",
+    "remove",
+  ]),
+  priority: z.enum(["high", "medium", "low"]),
+  section: z.enum([
+    "headline",
+    "summary",
+    "skills",
+    "experience",
+    "education",
+    "projects",
+    "certifications",
+    "other",
+  ]),
+  target: z.string(),
+  currentText: z.string().optional(),
+  suggestedText: z.string(),
+  reason: z.string(),
+  matchedKeywords: z.array(z.string()).default([]),
+});
+
+export const cvSuggestionsSchema = z.object({
+  overallNote: z.string(),
+  suggestions: z.array(cvSuggestionSchema),
+  missingKeywords: z.array(z.string()).default([]),
+  strengthsToEmphasize: z.array(z.string()).default([]),
+});
+
+export type CVSuggestion = z.infer<typeof cvSuggestionSchema>;
+export type CVSuggestions = z.infer<typeof cvSuggestionsSchema>;

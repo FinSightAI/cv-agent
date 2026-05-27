@@ -10,6 +10,72 @@ export const dictionary = {
     "nav.agent": "סוכן AI",
     "nav.connectors": "אתרי משרות",
     "nav.settings": "העדפות",
+    "nav.help": "מדריך",
+    "help.title": "מדריך שימוש",
+    "help.subtitle":
+      "כל מה שצריך כדי להתחיל — שלוש דקות, ואתה עם CV מותאם למשרה הראשונה.",
+    "help.quickStart.title": "התחלה מהירה",
+    "help.quickStart.step1":
+      "העלה את קורות החיים שלך (PDF/DOCX) בעמוד 'קורות חיים'. המערכת תפענח אותם אוטומטית.",
+    "help.quickStart.step2":
+      "הוסף משרה: הדבק לינק או טקסט מתיאור המשרה. הסוכן יחלץ דרישות וסקילים.",
+    "help.quickStart.step3":
+      "פתח את המשרה ולחץ 'נתח התאמה' — תקבל ציון, פערים ושיפורים מומלצים.",
+    "help.tabs.title": "מה יש בכל Tab של משרה",
+    "help.tabs.match.title": "ניתוח התאמה",
+    "help.tabs.match.desc":
+      "ציון 0-100, חוזקות, פערים (חוסם / משמעותי / קל), והמלצה — להגיש / לערוך / לדלג.",
+    "help.tabs.suggest.title": "שיפורי CV",
+    "help.tabs.suggest.desc":
+      "רשימת שיפורים נקודתיים שתוכל ליישם ידנית — בלי לשכתב את כל ה-CV. כל הצעה עם נוכחי, מוצע, ולמה.",
+    "help.tabs.tailor.title": "CV מותאם",
+    "help.tabs.tailor.desc":
+      "גרסה מלאה של ה-CV שלך מותאמת למשרה — סידור bullets מחדש, ניסוח דגשים, ייצוא ל-PDF/Markdown.",
+    "help.tabs.letter.title": "מכתב מקדים",
+    "help.tabs.letter.desc":
+      "מכתב 180-260 מילים בעברית או באנגלית, בטון לבחירה. עם streaming — תראה אותו נכתב בזמן אמת.",
+    "help.modules.title": "מודולים נוספים",
+    "help.modules.jobs.title": "משרות",
+    "help.modules.jobs.desc":
+      "כל המשרות במקום אחד עם סטטוס, ציון התאמה, וסינון לפי טקסט/סטטוס/ציון/רימוט.",
+    "help.modules.inbox.title": "תיבת דואר חכמה",
+    "help.modules.inbox.desc":
+      "מחבר את Gmail, סורק מיילים שקשורים להגשות שלך, ומסווג: ראיון / דחייה / הצעה. דורש Google OAuth.",
+    "help.modules.connectors.title": "אתרי משרות",
+    "help.modules.connectors.desc":
+      "חיפוש משרות ב-Greenhouse / Lever / LinkedIn / Workday מתוך האפליקציה.",
+    "help.modules.agent.title": "סוכן AI",
+    "help.modules.agent.desc":
+      "צ'אט חופשי עם הסוכן — שאל על המשרות שלך, בקש סיכומים, התייעץ על העדפות.",
+    "help.faq.title": "שאלות נפוצות",
+    "help.faq.q1": "איפה הנתונים שלי נשמרים?",
+    "help.faq.a1":
+      "ב-localStorage של הדפדפן בלבד. שום דבר לא נשלח לשרת חוץ מקריאות AI עצמן. אם תנקה את ה-cache של הדפדפן — הנתונים יימחקו.",
+    "help.faq.q2": "האם המערכת תמציא ניסיון שאין לי?",
+    "help.faq.a2":
+      "לא. ההנחיות לסוכן חוסמות פברוק. הוא רק יסדר מחדש, ינסח, ויבליט מה שכבר קיים ב-CV שלך. אם נראה לך שמשהו לא נכון — תוכל לערוך ידנית.",
+    "help.faq.q3": "כמה זה עולה?",
+    "help.faq.a3":
+      "חינמי. המערכת משתמשת ב-Google Gemini Free Tier (10 בקשות לדקה, ~250 ביום). יש rate limiting פנימי כדי לא לחרוג.",
+    "help.faq.q4": "האם אתם שולחים הגשות אוטומטית למשרות?",
+    "help.faq.a4":
+      "לא. זה Co-pilot — מכין לך הכל ואתה לוחץ Submit. שליחה אוטומטית מפרה את התנאים של רוב הפורטלים ופוגעת בסיכוי שלך להתקבל.",
+    "help.faq.q5": "Gmail integration לא עובד אצלי",
+    "help.faq.q5.alt": "",
+    "help.faq.a5":
+      "צריך להגדיר Google OAuth client בעצמך ב-Google Cloud Console ולהוסיף את ה-credentials כ-env vars ב-Vercel. ראה הסבר מטה.",
+    "help.gmail.title": "הגדרת Gmail Integration",
+    "help.gmail.desc":
+      "פעם אחת. אחרי שזה מוגדר, /inbox יציע לחבר את ה-Gmail שלך בלחיצה.",
+    "help.gmail.step1":
+      "פתח את Google Cloud Console, צור פרוייקט חדש (או בחר קיים), והפעל את Gmail API.",
+    "help.gmail.step2":
+      "תחת 'Credentials' צור OAuth client ID מסוג Web Application. הוסף redirect URI: https://your-domain/api/auth/google/callback",
+    "help.gmail.step3":
+      "ב-OAuth consent screen הוסף את הסקופ gmail.readonly ואת המייל שלך כ-test user.",
+    "help.gmail.step4":
+      "ב-Vercel הוסף את GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, ו-SESSION_SECRET (אפשר לייצר עם openssl rand -hex 32). re-deploy.",
+    "help.gmail.openConsole": "פתח Google Cloud Console",
     "common.loading": "טוען...",
     "common.save": "שמור",
     "common.cancel": "בטל",
@@ -73,6 +139,14 @@ export const dictionary = {
     "jobs.count": "משרות נשמרו",
     "jobs.add": "הוסף משרה",
     "jobs.emptyState": "הוסף את המשרה הראשונה כדי להתחיל",
+    "jobs.filter.search": "חיפוש",
+    "jobs.filter.search.placeholder": "תפקיד, חברה, מיקום...",
+    "jobs.filter.status": "סטטוס",
+    "jobs.filter.minScore": "ציון מינ'",
+    "jobs.filter.all": "הכל",
+    "jobs.filter.remoteOnly": "רימוט בלבד",
+    "jobs.filter.clear": "נקה סינון",
+    "jobs.filter.empty": "אין משרות שתואמות את הסינון",
     // Jobs new
     "jobs.new.title": "הוסף משרה",
     "jobs.new.subtitle":
@@ -96,6 +170,47 @@ export const dictionary = {
     "job.tab.match": "ניתוח התאמה",
     "job.tab.letter": "מכתב מקדים",
     "job.tab.details": "דרישות המשרה",
+    "job.tab.suggest": "שיפורי CV",
+    "suggest.title": "שיפורים מומלצים לקורות חיים",
+    "suggest.desc":
+      "רשימה מסודרת של שינויים נקודתיים שתוכל ליישם ידנית — בלי לשכתב את כל ה-CV.",
+    "suggest.run": "נתח את ה-CV מול המשרה",
+    "suggest.regenerate": "ניתוח מחדש",
+    "suggest.analyzing": "מנתח...",
+    "suggest.success": "ההמלצות מוכנות",
+    "suggest.failed": "ניתוח נכשל",
+    "suggest.noResume": "העלה קורות חיים תחילה",
+    "suggest.overallNote": "סיכום",
+    "suggest.missingKeywords": "מילות מפתח שחסרות לגמרי",
+    "suggest.missingKeywords.hint":
+      "אלה מילים מהמשרה שלא קיימות ב-CV. הוסף רק אם זה נכון עליך.",
+    "suggest.strengths": "חוזקות שכדאי להבליט",
+    "suggest.priority.high": "עדיפות גבוהה",
+    "suggest.priority.medium": "עדיפות בינונית",
+    "suggest.priority.low": "פוליש",
+    "suggest.type.add_skill": "הוסף סקיל",
+    "suggest.type.rewrite_bullet": "שכתב bullet",
+    "suggest.type.add_keyword": "הוסף מילת מפתח",
+    "suggest.type.quantify": "הוסף מספרים",
+    "suggest.type.reword_headline": "שנה כותרת",
+    "suggest.type.rewrite_summary": "שכתב summary",
+    "suggest.type.reorder": "סדר מחדש",
+    "suggest.type.add_project_mention": "הזכר פרוייקט",
+    "suggest.type.remove": "הסר",
+    "suggest.section.headline": "כותרת",
+    "suggest.section.summary": "תקציר",
+    "suggest.section.skills": "סקילים",
+    "suggest.section.experience": "ניסיון",
+    "suggest.section.education": "השכלה",
+    "suggest.section.projects": "פרוייקטים",
+    "suggest.section.certifications": "הסמכות",
+    "suggest.section.other": "אחר",
+    "suggest.currentLabel": "נוכחי",
+    "suggest.suggestedLabel": "מוצע",
+    "suggest.reasonLabel": "למה",
+    "suggest.copySuggested": "העתק הצעה",
+    "suggest.empty":
+      "ה-CV שלך כבר מותאם היטב למשרה — לא נמצאו שיפורים משמעותיים.",
     "job.match.title": "ניתוח התאמה",
     "job.match.desc":
       "הסוכן ישווה את הקורות חיים לדרישות, יחזיר ציון, פערים, חוזקות והמלצה.",
@@ -284,6 +399,19 @@ export const dictionary = {
     "settings.workdayBoards.help":
       "כל URL בשורה נפרדת או מופרד בפסיקים. אם תשאיר ריק, נשתמש ברשימה ברירת מחדל.",
 
+    "settings.alert.title": "התראה יומית",
+    "settings.alert.badge": "Cron",
+    "settings.alert.desc":
+      "מקבל מייל כל בוקר עם משרות חדשות שמתאימות לפרופיל שלך. מבוסס Vercel Cron + Resend.",
+    "settings.alert.envNote":
+      "הגדר את ה-env vars הבאים ב-Vercel כדי להפעיל את ההתראה:",
+    "settings.alert.emailPlaceholder": "your@email.com",
+    "settings.alert.rolesPlaceholder": "Software Engineer, Fullstack",
+    "settings.alert.secretPlaceholder": "any-random-string",
+    "settings.alert.getResendKey": "צור Resend API Key (חינמי)",
+    "settings.alert.openVercel": "פתח Vercel Dashboard",
+    "settings.alert.schedule": "הסוכן רץ כל יום ב-07:00 שעון ישראל (05:00 UTC).",
+
     // Inbox / Gmail
     "nav.inbox": "תיבת דואר",
     "inbox.title": "תיבת דואר חכמה",
@@ -400,6 +528,71 @@ export const dictionary = {
     "nav.agent": "AI Agent",
     "nav.connectors": "Job Sites",
     "nav.settings": "Preferences",
+    "nav.help": "Guide",
+    "help.title": "User Guide",
+    "help.subtitle":
+      "Everything you need to get started — three minutes and you're ready to apply.",
+    "help.quickStart.title": "Quick start",
+    "help.quickStart.step1":
+      "Upload your CV (PDF/DOCX) on the 'CV' page. We'll parse it automatically.",
+    "help.quickStart.step2":
+      "Add a job: paste a link or copy the description text. The agent will extract requirements and skills.",
+    "help.quickStart.step3":
+      "Open the job and click 'Analyze fit' — you'll get a score, gaps, and concrete improvement suggestions.",
+    "help.tabs.title": "What each job tab does",
+    "help.tabs.match.title": "Fit analysis",
+    "help.tabs.match.desc":
+      "0-100 score, strengths, gaps (blocker / major / minor), and a recommendation — apply / tailor first / skip.",
+    "help.tabs.suggest.title": "CV improvements",
+    "help.tabs.suggest.desc":
+      "Targeted edits you apply manually — no full rewrite. Each suggestion shows current, proposed, and why.",
+    "help.tabs.tailor.title": "Tailored CV",
+    "help.tabs.tailor.desc":
+      "Full tailored version of your CV — reordered bullets, emphasis rewording, export to PDF/Markdown.",
+    "help.tabs.letter.title": "Cover letter",
+    "help.tabs.letter.desc":
+      "180-260 word letter in your chosen language and tone. Streams live as the model writes.",
+    "help.modules.title": "Other modules",
+    "help.modules.jobs.title": "Jobs",
+    "help.modules.jobs.desc":
+      "All your jobs in one place with status, fit score, and filters by text / status / score / remote.",
+    "help.modules.inbox.title": "Smart inbox",
+    "help.modules.inbox.desc":
+      "Connect Gmail, scan emails related to your applications, and classify them: interview / rejection / offer. Requires Google OAuth.",
+    "help.modules.connectors.title": "Job sites",
+    "help.modules.connectors.desc":
+      "Search jobs on Greenhouse / Lever / LinkedIn / Workday from inside the app.",
+    "help.modules.agent.title": "AI Agent",
+    "help.modules.agent.desc":
+      "Free-form chat with the agent — ask about your jobs, request summaries, discuss preferences.",
+    "help.faq.title": "FAQ",
+    "help.faq.q1": "Where is my data stored?",
+    "help.faq.a1":
+      "In your browser's localStorage only. Nothing is sent to a server beyond the AI calls themselves. If you clear your browser cache the data is gone.",
+    "help.faq.q2": "Will the system invent experience I don't have?",
+    "help.faq.a2":
+      "No. The model instructions explicitly block fabrication. It only reorders, rewords, and highlights what's already in your CV. You can always edit manually if anything looks off.",
+    "help.faq.q3": "How much does this cost?",
+    "help.faq.a3":
+      "Free. The system uses the Google Gemini free tier (10 requests/minute, ~250/day). Internal rate-limiting keeps you under quota.",
+    "help.faq.q4": "Does the app auto-submit applications?",
+    "help.faq.a4":
+      "No. This is a co-pilot — it prepares everything and you click Submit. Auto-submission violates most job-portal ToS and hurts your chances of getting through.",
+    "help.faq.q5": "Gmail integration isn't working",
+    "help.faq.a5":
+      "You need to set up your own Google OAuth client in Google Cloud Console and add the credentials as env vars in Vercel. See setup below.",
+    "help.gmail.title": "Gmail Integration setup",
+    "help.gmail.desc":
+      "One-time setup. Once configured, /inbox will let you connect your Gmail with one click.",
+    "help.gmail.step1":
+      "Open Google Cloud Console, create a new project (or pick an existing one), and enable the Gmail API.",
+    "help.gmail.step2":
+      "Under 'Credentials' create an OAuth client ID of type Web Application. Add redirect URI: https://your-domain/api/auth/google/callback",
+    "help.gmail.step3":
+      "In the OAuth consent screen, add the gmail.readonly scope and your email as a test user.",
+    "help.gmail.step4":
+      "In Vercel add GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, and SESSION_SECRET (generate with openssl rand -hex 32). Redeploy.",
+    "help.gmail.openConsole": "Open Google Cloud Console",
     "common.loading": "Loading…",
     "common.save": "Save",
     "common.cancel": "Cancel",
@@ -461,6 +654,14 @@ export const dictionary = {
     "jobs.count": "jobs saved",
     "jobs.add": "Add job",
     "jobs.emptyState": "Add your first job to get started",
+    "jobs.filter.search": "Search",
+    "jobs.filter.search.placeholder": "Title, company, location…",
+    "jobs.filter.status": "Status",
+    "jobs.filter.minScore": "Min score",
+    "jobs.filter.all": "All",
+    "jobs.filter.remoteOnly": "Remote only",
+    "jobs.filter.clear": "Clear filters",
+    "jobs.filter.empty": "No jobs match the current filters",
     "jobs.new.title": "Add a job",
     "jobs.new.subtitle":
       "Paste a URL (LinkedIn, Greenhouse, Lever, Ashby, careers page) or text. The agent extracts requirements and scores fit.",
@@ -482,6 +683,47 @@ export const dictionary = {
     "job.tab.match": "Fit analysis",
     "job.tab.letter": "Cover letter",
     "job.tab.details": "Job requirements",
+    "job.tab.suggest": "CV improvements",
+    "suggest.title": "Recommended CV improvements",
+    "suggest.desc":
+      "A prioritized list of targeted edits you can apply manually — no full rewrite.",
+    "suggest.run": "Analyze CV against this job",
+    "suggest.regenerate": "Re-analyze",
+    "suggest.analyzing": "Analyzing…",
+    "suggest.success": "Suggestions ready",
+    "suggest.failed": "Analysis failed",
+    "suggest.noResume": "Upload a resume first",
+    "suggest.overallNote": "Overview",
+    "suggest.missingKeywords": "Keywords missing entirely",
+    "suggest.missingKeywords.hint":
+      "These words appear in the JD but not in your CV. Add only if truthful.",
+    "suggest.strengths": "Strengths to keep visible",
+    "suggest.priority.high": "High priority",
+    "suggest.priority.medium": "Medium",
+    "suggest.priority.low": "Polish",
+    "suggest.type.add_skill": "Add skill",
+    "suggest.type.rewrite_bullet": "Rewrite bullet",
+    "suggest.type.add_keyword": "Add keyword",
+    "suggest.type.quantify": "Quantify",
+    "suggest.type.reword_headline": "Reword headline",
+    "suggest.type.rewrite_summary": "Rewrite summary",
+    "suggest.type.reorder": "Reorder",
+    "suggest.type.add_project_mention": "Mention project",
+    "suggest.type.remove": "Remove",
+    "suggest.section.headline": "Headline",
+    "suggest.section.summary": "Summary",
+    "suggest.section.skills": "Skills",
+    "suggest.section.experience": "Experience",
+    "suggest.section.education": "Education",
+    "suggest.section.projects": "Projects",
+    "suggest.section.certifications": "Certifications",
+    "suggest.section.other": "Other",
+    "suggest.currentLabel": "Current",
+    "suggest.suggestedLabel": "Suggested",
+    "suggest.reasonLabel": "Why",
+    "suggest.copySuggested": "Copy suggestion",
+    "suggest.empty":
+      "Your CV already aligns well with this job — no meaningful improvements found.",
     "job.match.title": "Fit analysis",
     "job.match.desc":
       "The agent compares your resume to the requirements and returns a score, gaps, strengths, and a recommendation.",
@@ -661,6 +903,19 @@ export const dictionary = {
       "https://siemens.wd1.myworkdayjobs.com/Siemens_Careers, https://salesforce.wd12.myworkdayjobs.com/External_Career_Site",
     "settings.workdayBoards.help":
       "One URL per line or comma-separated. If empty we use a default list.",
+
+    "settings.alert.title": "Daily alert",
+    "settings.alert.badge": "Cron",
+    "settings.alert.desc":
+      "Get an email every morning with new jobs matching your profile. Powered by Vercel Cron + Resend.",
+    "settings.alert.envNote":
+      "Set these env vars in Vercel to activate the alert:",
+    "settings.alert.emailPlaceholder": "your@email.com",
+    "settings.alert.rolesPlaceholder": "Software Engineer, Fullstack",
+    "settings.alert.secretPlaceholder": "any-random-string",
+    "settings.alert.getResendKey": "Get Resend API Key (free)",
+    "settings.alert.openVercel": "Open Vercel Dashboard",
+    "settings.alert.schedule": "The agent runs every day at 07:00 Israel time (05:00 UTC).",
 
     "nav.inbox": "Inbox",
     "inbox.title": "Smart inbox",

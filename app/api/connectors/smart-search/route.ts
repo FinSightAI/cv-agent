@@ -5,6 +5,7 @@ import {
   DEFAULT_WORKDAY_BOARDS,
   searchWorkday,
 } from "@/lib/connectors/workday-search";
+import { searchAllJobs } from "@/lib/connectors/alljobs";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -16,7 +17,7 @@ const inputSchema = z.object({
   remoteOk: z.boolean().optional(),
   recentDays: z.union([z.literal(1), z.literal(3), z.literal(7), z.literal(14), z.literal(30)]).optional(),
   workdayBoards: z.array(z.string()).optional(),
-  sources: z.array(z.enum(["linkedin", "workday"])).default(["linkedin", "workday"]),
+  sources: z.array(z.enum(["linkedin", "workday", "alljobs"])).default(["linkedin", "workday"]),
 });
 
 export async function POST(req: NextRequest) {
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest) {
     parsed.data;
 
   const keywords = buildKeywordQuery(targetRoles, techMust);
+  const keywordsHe = targetRoles.join(" ");
   if (!keywords) {
     return NextResponse.json(
       { error: "Add at least one target role or required tech in your preferences." },
@@ -59,6 +61,16 @@ export async function POST(req: NextRequest) {
       searchWorkday({ keywords, boards, perBoardLimit: 20 })
         .then((jobs) => ({ source: "workday" as const, jobs }))
         .catch((err: Error) => ({ source: "workday" as const, jobs: [], error: err.message })),
+    );
+  }
+
+  if (sources.includes("alljobs")) {
+    // Search AllJobs with Hebrew keywords first, fall back to English if empty
+    const alljobsKeywords = keywordsHe.trim() || keywords;
+    tasks.push(
+      searchAllJobs({ keywords: alljobsKeywords, maxResults: 40 })
+        .then((jobs) => ({ source: "alljobs" as const, jobs }))
+        .catch((err: Error) => ({ source: "alljobs" as const, jobs: [], error: err.message })),
     );
   }
 

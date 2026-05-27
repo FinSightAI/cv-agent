@@ -8,6 +8,7 @@ import type {
   ParsedResume,
   MatchResult,
   TailoredResume,
+  CVSuggestions,
 } from "@/lib/ai/schemas";
 
 const RESUME_KEY = "cv-agent:resume:v1";
@@ -28,6 +29,7 @@ export type StoredJob = {
   match?: MatchResult;
   coverLetter?: string;
   tailoredResume?: TailoredResume;
+  suggestions?: CVSuggestions;
   status:
     | "saved"
     | "drafting"

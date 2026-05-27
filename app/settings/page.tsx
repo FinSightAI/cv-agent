@@ -197,6 +197,33 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      <Card className="glass">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            {t("settings.alert.title")}
+            <span className="text-xs font-normal px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
+              {t("settings.alert.badge")}
+            </span>
+          </CardTitle>
+          <CardDescription>{t("settings.alert.desc")}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm">
+          <p className="text-muted-foreground">{t("settings.alert.envNote")}</p>
+          <div className="rounded-lg bg-muted/30 border border-border/50 p-4 space-y-1.5 font-mono text-xs" dir="ltr">
+            <div><span className="text-primary">DAILY_ALERT_EMAIL</span> = <span className="text-muted-foreground">{t("settings.alert.emailPlaceholder")}</span></div>
+            <div><span className="text-primary">DAILY_ALERT_ROLES</span> = <span className="text-muted-foreground">{prefs.targetRoles?.length ? prefs.targetRoles.join(", ") : t("settings.alert.rolesPlaceholder")}</span></div>
+            <div><span className="text-primary">DAILY_ALERT_LOCATION</span> = <span className="text-muted-foreground">{prefs.locations?.[0] ?? "Israel"}</span></div>
+            <div><span className="text-primary">RESEND_API_KEY</span> = <span className="text-muted-foreground">re_...</span></div>
+            <div><span className="text-primary">CRON_SECRET</span> = <span className="text-muted-foreground">{t("settings.alert.secretPlaceholder")}</span></div>
+          </div>
+          <div className="flex gap-3 flex-wrap text-xs">
+            <a href="https://resend.com/api-keys" target="_blank" rel="noreferrer" className="text-primary hover:underline">{t("settings.alert.getResendKey")} →</a>
+            <a href="https://vercel.com/dashboard" target="_blank" rel="noreferrer" className="text-primary hover:underline">{t("settings.alert.openVercel")} →</a>
+          </div>
+          <p className="text-xs text-muted-foreground">{t("settings.alert.schedule")}</p>
+        </CardContent>
+      </Card>
+
       <div className="flex justify-end">
         <Button onClick={save}>{t("common.save")}</Button>
       </div>
