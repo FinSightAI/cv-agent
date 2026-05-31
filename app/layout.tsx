@@ -28,12 +28,12 @@ const SITE_URL =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "JobOS — The operating system for your job search",
-    template: "%s · JobOS",
+    default: "Jobos — The operating system for your job search",
+    template: "%s · Jobos",
   },
   description:
     "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
-  applicationName: "JobOS",
+  applicationName: "Jobos",
   authors: [{ name: "Ofir Shamir" }],
   keywords: [
     "job search",
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: SITE_URL,
-    siteName: "JobOS",
-    title: "JobOS — The operating system for your job search",
+    siteName: "Jobos",
+    title: "Jobos — The operating system for your job search",
     description:
       "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
     locale: "he_IL",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "JobOS — The operating system for your job search",
+    title: "Jobos — The operating system for your job search",
     description:
       "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
   },

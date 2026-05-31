@@ -1,7 +1,7 @@
 export const dictionary = {
   he: {
     // Brand & nav
-    "brand.name": "JobOS",
+    "brand.name": "Jobos",
     "brand.tagline": "מערכת ההפעלה לחיפוש עבודה",
     "nav.dashboard": "סקירה",
     "nav.cv": "קורות חיים",
@@ -668,7 +668,7 @@ export const dictionary = {
     "debrief.different": "מה היית עושה אחרת",
   },
   en: {
-    "brand.name": "JobOS",
+    "brand.name": "Jobos",
     "brand.tagline": "The operating system for your job search",
     "nav.dashboard": "Overview",
     "nav.cv": "Resume",

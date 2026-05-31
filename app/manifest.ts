@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "JobOS",
-    short_name: "JobOS",
+    name: "Jobos",
+    short_name: "Jobos",
     description: "מערכת ההפעלה לחיפוש עבודה",
     start_url: "/",
     display: "standalone",
