@@ -45,6 +45,7 @@ export type StoredJob = {
     | "ghosted";
   notes?: string;
   appliedAt?: string;
+  followUpAt?: string;
   createdAt: string;
 };
 

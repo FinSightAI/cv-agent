@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/lang-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { Key } from "@/lib/i18n/dictionary";
 import { store } from "@/lib/storage";
 
@@ -134,15 +135,18 @@ export function AppSidebar() {
             ⌘K
           </kbd>
         </button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full justify-start gap-2"
-          onClick={() => setLang(lang === "he" ? "en" : "he")}
-        >
-          <Languages className="size-4" />
-          {lang === "he" ? "English" : "עברית"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 justify-start gap-2"
+            onClick={() => setLang(lang === "he" ? "en" : "he")}
+          >
+            <Languages className="size-4" />
+            {lang === "he" ? "English" : "עברית"}
+          </Button>
+          <ThemeToggle />
+        </div>
         <div className="text-[10px] text-muted-foreground/50 text-center">
           v0.2 · Beta
         </div>

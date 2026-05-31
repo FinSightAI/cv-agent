@@ -6,6 +6,7 @@ import { MobileNav } from "@/components/mobile-nav";
 import { MobileHeader } from "@/components/mobile-header";
 import { CommandPalette } from "@/components/command-palette";
 import { LangProvider } from "@/components/lang-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const heebo = Heebo({
@@ -71,27 +72,29 @@ export default function RootLayout({
     <html
       lang="he"
       dir="rtl"
-      className={`dark ${heebo.variable} ${inter.variable} h-full antialiased`}
+      className={`${heebo.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-background text-foreground relative">
-        <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-          <div className="absolute -top-40 start-1/3 size-[600px] rounded-full bg-primary/10 blur-[120px]" />
-          <div className="absolute bottom-0 end-0 size-[500px] rounded-full bg-fuchsia-500/10 blur-[120px]" />
-          <div className="absolute top-1/3 start-0 size-[400px] rounded-full bg-blue-500/5 blur-[100px]" />
-        </div>
-        <LangProvider>
-          <div className="flex min-h-screen">
-            <AppSidebar />
-            <div className="flex-1 flex flex-col overflow-x-hidden">
-              <MobileHeader />
-              <main className="flex-1 pb-16 md:pb-0">{children}</main>
-            </div>
+        <ThemeProvider>
+          <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+            <div className="absolute -top-40 start-1/3 size-[600px] rounded-full bg-primary/10 blur-[120px]" />
+            <div className="absolute bottom-0 end-0 size-[500px] rounded-full bg-fuchsia-500/10 blur-[120px]" />
+            <div className="absolute top-1/3 start-0 size-[400px] rounded-full bg-blue-500/5 blur-[100px]" />
           </div>
-          <MobileNav />
-          <CommandPalette />
-          <Toaster richColors position="top-center" theme="dark" />
-        </LangProvider>
+          <LangProvider>
+            <div className="flex min-h-screen">
+              <AppSidebar />
+              <div className="flex-1 flex flex-col overflow-x-hidden">
+                <MobileHeader />
+                <main className="flex-1 pb-16 md:pb-0">{children}</main>
+              </div>
+            </div>
+            <MobileNav />
+            <CommandPalette />
+            <Toaster richColors position="top-center" theme="dark" />
+          </LangProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

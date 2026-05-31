@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Sparkles, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/lang-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { Key } from "@/lib/i18n/dictionary";
 
 const PAGE_TITLES: Record<string, Key> = {
@@ -37,14 +38,17 @@ export function MobileHeader() {
         </div>
         <span className="font-semibold text-sm">{t(titleKey as Key)}</span>
       </Link>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 text-xs text-muted-foreground"
-        onClick={() => setLang(lang === "he" ? "en" : "he")}
-      >
-        <Languages className="size-4" />
-      </Button>
+      <div className="flex items-center gap-1">
+        <ThemeToggle />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 text-xs text-muted-foreground"
+          onClick={() => setLang(lang === "he" ? "en" : "he")}
+        >
+          <Languages className="size-4" />
+        </Button>
+      </div>
     </header>
   );
 }

@@ -88,7 +88,14 @@ export default function Home() {
       }
     }
 
-    return { active, interviews, avgScore, stale, highScoreNoLetter, pipeline };
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dueReminders = jobs.filter((j) => {
+      if (!j.followUpAt) return false;
+      return new Date(j.followUpAt) <= today;
+    });
+
+    return { active, interviews, avgScore, stale, highScoreNoLetter, pipeline, dueReminders };
   }, [jobs]);
 
   const recent = useMemo(
@@ -113,6 +120,19 @@ export default function Home() {
       text: t("dashboard.nudge.noJobs"),
       cta: t("dashboard.nudge.noJobs.cta"),
       href: "/jobs/new",
+    });
+  }
+
+  if (stats.dueReminders.length > 0) {
+    nudges.push({
+      icon: <Bell className="size-4 text-amber-400" />,
+      text: t("dashboard.reminder.due").replace("{n}", String(stats.dueReminders.length)),
+      cta: stats.dueReminders.length === 1
+        ? stats.dueReminders[0]!.parsed.company
+        : t("nav.jobs"),
+      href: stats.dueReminders.length === 1
+        ? `/jobs/${stats.dueReminders[0]!.id}`
+        : "/jobs",
     });
   }
 

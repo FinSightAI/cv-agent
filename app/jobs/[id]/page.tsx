@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +39,9 @@ import {
   ChevronDown,
   ChevronUp,
   BrainCircuit,
+  Archive,
+  Bell,
+  BellOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import { store, type StoredJob } from "@/lib/storage";
@@ -86,6 +89,7 @@ export default function JobDetailPage() {
     );
   const [language, setLanguage] = useState<"he" | "en">("he");
   const [notes, setNotes] = useState("");
+  const [followUpAt, setFollowUpAt] = useState("");
   const notesTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -98,7 +102,46 @@ export default function JobDetailPage() {
     setJob(j);
     if (j.coverLetter) setLetter(j.coverLetter);
     if (j.notes) setNotes(j.notes);
+    if (j.followUpAt) setFollowUpAt(j.followUpAt.slice(0, 10));
   }, [id, router, t]);
+
+  function handleFollowUpChange(val: string) {
+    setFollowUpAt(val);
+    if (!job) return;
+    const updated = { ...job, followUpAt: val || undefined };
+    store.saveJob(updated);
+    setJob(updated);
+    if (val) toast.success(t("job.followUp.saved"), { duration: 1500 });
+  }
+
+  function downloadZip() {
+    if (!job) return;
+    import("jszip").then(({ default: JSZip }) => {
+      const zip = new JSZip();
+      const filename = `${job.parsed.company}-${job.parsed.title}`
+        .replace(/[^\p{L}\p{N}\-_. ]/gu, "").replace(/\s+/g, "-").slice(0, 60);
+      const jobInfo = [
+        `תפקיד: ${job.parsed.title}`,
+        `חברה: ${job.parsed.company}`,
+        job.parsed.location ? `מיקום: ${job.parsed.location}` : "",
+        job.url ? `URL: ${job.url}` : "",
+        job.appliedAt ? `הוגש: ${new Date(job.appliedAt).toLocaleDateString("he-IL")}` : "",
+        job.notes ? `\nהערות:\n${job.notes}` : "",
+      ].filter(Boolean).join("\n");
+      zip.file("job-info.txt", jobInfo);
+      if (job.coverLetter) zip.file("cover-letter.txt", job.coverLetter);
+      if (job.tailoredResume) {
+        const md = resumeToMarkdown(job.tailoredResume.resume, lang);
+        zip.file("tailored-cv.md", md);
+      }
+      zip.generateAsync({ type: "blob" }).then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = `${filename}.zip`; a.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+  }
 
   function handleNotesChange(val: string) {
     setNotes(val);
@@ -234,9 +277,15 @@ export default function JobDetailPage() {
             </a>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          {(job.coverLetter || job.tailoredResume) && (
+            <Button variant="outline" size="sm" onClick={downloadZip} title="הורד חבילת הגשה">
+              <Archive className="size-4 me-1.5" />
+              ZIP
+            </Button>
+          )}
           <Select value={job.status} onValueChange={(v) => setStatus(v as StoredJob["status"])}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[150px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -253,12 +302,36 @@ export default function JobDetailPage() {
         </div>
       </header>
 
-      {/* Applied date */}
-      {job.appliedAt && (
-        <p className="text-xs text-muted-foreground">
-          {t("job.appliedAt")} {formatDate(job.appliedAt, lang)}
-        </p>
-      )}
+      {/* Applied date + follow-up reminder */}
+      <div className="flex flex-wrap items-center gap-4 print-hide">
+        {job.appliedAt && (
+          <p className="text-xs text-muted-foreground">
+            {t("job.appliedAt")} {formatDate(job.appliedAt, lang)}
+          </p>
+        )}
+        <div className="flex items-center gap-2">
+          <Bell className="size-3.5 text-muted-foreground shrink-0" />
+          <span className="text-xs text-muted-foreground">{t("job.followUp")}</span>
+          <input
+            type="date"
+            value={followUpAt}
+            onChange={(e) => handleFollowUpChange(e.target.value)}
+            className="text-xs bg-muted/30 border border-border/50 rounded-md px-2 py-1 text-foreground"
+          />
+          {followUpAt && (
+            <Button variant="ghost" size="icon" className="size-6" onClick={() => handleFollowUpChange("")}>
+              <BellOff className="size-3" />
+            </Button>
+          )}
+          {followUpAt && new Date(followUpAt) <= new Date() && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400">
+              {new Date(followUpAt).toDateString() === new Date().toDateString()
+                ? t("job.followUp.due")
+                : t("job.followUp.overdue")}
+            </span>
+          )}
+        </div>
+      </div>
 
       {/* Notes — auto-save */}
       <div className="print-hide">
@@ -387,6 +460,27 @@ export default function JobDetailPage() {
                     {t("common.copy")}
                   </Button>
                 )}
+                {letter && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const company = (job.parsed.company || "company")
+                        .replace(/[^\p{L}\p{N}\-_. ]/gu, "")
+                        .replace(/\s+/g, "-")
+                        .slice(0, 60);
+                      const blob = new Blob([letter], { type: "text/plain;charset=utf-8" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `cover-letter-${company}.txt`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                  >
+                    <Download className="size-4 me-2" />
+                    {t("common.download")}
+                  </Button>
+                )}
               </div>
               {generating && !letter && <AILoadingSkeleton kind="letter" />}
               {letter && (
@@ -395,6 +489,11 @@ export default function JobDetailPage() {
                     {letter}
                   </CardContent>
                 </Card>
+              )}
+              {letter && (
+                <span className="text-xs text-muted-foreground">
+                  {letter.trim().split(/\s+/).filter(Boolean).length} מילים
+                </span>
               )}
             </CardContent>
           </Card>
