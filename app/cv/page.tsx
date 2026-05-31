@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { Upload, FileText, Loader2, Sparkles, Pencil, X, Check, Plus } from "lucide-react";
 import type { ParsedResume } from "@/lib/ai/schemas";
 import { useLang } from "@/components/lang-provider";
+import { LinkedInOptimizer } from "@/components/linkedin-optimizer";
 
 function cvCompleteness(p: ParsedResume): number {
   let score = 0;
@@ -251,6 +252,8 @@ function ResumeView({
       <p className="text-xs text-muted-foreground text-center">
         {t("cv.localStorageNote")}
       </p>
+
+      <LinkedInOptimizer />
     </div>
   );
 }

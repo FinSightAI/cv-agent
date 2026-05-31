@@ -49,9 +49,12 @@ import { toast } from "sonner";
 import { store, type StoredJob } from "@/lib/storage";
 import { ReadinessScore } from "@/components/readiness-score";
 import { SalaryNegotiation } from "@/components/salary-negotiation";
+import { RejectionAnalyzer } from "@/components/rejection-analyzer";
 import { InterviewDebrief } from "@/components/interview-debrief";
 import { TurboApply } from "@/components/turbo-apply";
 import { CompanyResearch } from "@/components/company-research";
+import { Plan306090 } from "@/components/plan-30-60-90";
+import { JdDecoder } from "@/components/jd-decoder";
 import type {
   CVSuggestion,
   CVSuggestions,
@@ -378,6 +381,11 @@ export default function JobDetailPage() {
           <SalaryNegotiation job={job} />
         </div>
       )}
+      {(job.status === "rejected" || job.status === "ghosted") && (
+        <div className="print-hide mt-4">
+          <RejectionAnalyzer job={job} />
+        </div>
+      )}
 
       <Tabs defaultValue="match" className="print-hide">
         <TabsList className="flex flex-nowrap overflow-x-auto w-full justify-start h-auto p-1 gap-0.5">
@@ -388,6 +396,8 @@ export default function JobDetailPage() {
           <TabsTrigger value="followup" className="shrink-0 text-xs">{t("followup.title")}</TabsTrigger>
           <TabsTrigger value="interview" className="shrink-0 text-xs">{t("job.tab.interview")}</TabsTrigger>
           <TabsTrigger value="company" className="shrink-0 text-xs">חברה 🔍</TabsTrigger>
+          <TabsTrigger value="plan" className="shrink-0 text-xs">{t("plan.title")}</TabsTrigger>
+          <TabsTrigger value="jd-decoder" className="shrink-0 text-xs">{t("jd.title")}</TabsTrigger>
           <TabsTrigger value="details" className="shrink-0 text-xs">{t("job.tab.details")}</TabsTrigger>
         </TabsList>
 
@@ -603,6 +613,14 @@ export default function JobDetailPage() {
 
         <TabsContent value="company" className="pt-4 space-y-4">
           <CompanyResearch job={job} />
+        </TabsContent>
+
+        <TabsContent value="plan" className="pt-4 space-y-4">
+          <Plan306090 job={job} />
+        </TabsContent>
+
+        <TabsContent value="jd-decoder" className="pt-4 space-y-4">
+          <JdDecoder job={job} />
         </TabsContent>
       </Tabs>
     </div>
