@@ -84,7 +84,7 @@ export default function RootLayout({
             <AppSidebar />
             <div className="flex-1 flex flex-col overflow-x-hidden">
               <MobileHeader />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-16 md:pb-0">{children}</main>
             </div>
           </div>
           <MobileNav />

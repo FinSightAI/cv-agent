@@ -30,7 +30,7 @@ export function MobileHeader() {
       .sort((a, b) => b[0].length - a[0].length)[0]?.[1] ?? "brand.name";
 
   return (
-    <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-13 bg-background/80 backdrop-blur-xl border-b border-border/50">
+    <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-12 bg-background/80 backdrop-blur-xl border-b border-border/50">
       <Link href="/" className="flex items-center gap-2">
         <div className="size-7 rounded-lg bg-gradient-to-br from-primary to-fuchsia-500 grid place-items-center shadow-sm shadow-primary/20">
           <Sparkles className="size-3.5 text-primary-foreground" />
