@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { searchLinkedIn } from "@/lib/connectors/linkedin-search";
 import { searchAllJobs } from "@/lib/connectors/alljobs";
+import { searchDrushim } from "@/lib/connectors/drushim";
 import type { ConnectorJob } from "@/lib/connectors/types";
 
 export const runtime = "nodejs";
@@ -37,15 +38,17 @@ export async function GET(req: NextRequest) {
 
   const keywords = roles.slice(0, 3).join(" OR ");
 
-  // Run LinkedIn + AllJobs in parallel, tolerate individual failures
-  const [linkedInResult, allJobsResult] = await Promise.all([
+  // Run LinkedIn + AllJobs + Drushim in parallel, tolerate individual failures
+  const [linkedInResult, allJobsResult, drushimResult] = await Promise.all([
     searchLinkedIn({ keywords, location, recentDays: 1, pages: 2 })
       .catch(() => [] as ConnectorJob[]),
     searchAllJobs({ keywords, maxResults: 30 })
       .catch(() => [] as ConnectorJob[]),
+    searchDrushim({ keywords, maxResults: 30 })
+      .catch(() => [] as ConnectorJob[]),
   ]);
 
-  const jobs = dedup([...linkedInResult, ...allJobsResult]);
+  const jobs = dedup([...linkedInResult, ...allJobsResult, ...drushimResult]);
 
   if (jobs.length === 0) {
     return NextResponse.json({ sent: false, reason: "no new jobs" });

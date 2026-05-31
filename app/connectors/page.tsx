@@ -111,10 +111,11 @@ function SmartSearch({
   const [errors, setErrors] = useState<string[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [recentDays, setRecentDays] = useState<1 | 3 | 7 | 14 | 30>(14);
-  const [sources, setSources] = useState<("linkedin" | "workday" | "alljobs")[]>([
+  const [sources, setSources] = useState<("linkedin" | "workday" | "alljobs" | "drushim")[]>([
     "linkedin",
     "workday",
     "alljobs",
+    "drushim",
   ]);
 
   const hasPrefs =
@@ -288,6 +289,23 @@ function SmartSearch({
                   }`}
                 >
                   AllJobs 🇮🇱
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSources((s) =>
+                      s.includes("drushim")
+                        ? s.filter((x) => x !== "drushim")
+                        : [...s, "drushim"],
+                    )
+                  }
+                  className={`px-3 py-2 rounded-lg border text-sm transition-all ${
+                    sources.includes("drushim")
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border/50 text-muted-foreground"
+                  }`}
+                >
+                  Drushim 🇮🇱
                 </button>
               </div>
             </div>

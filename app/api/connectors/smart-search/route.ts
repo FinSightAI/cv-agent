@@ -6,6 +6,7 @@ import {
   searchWorkday,
 } from "@/lib/connectors/workday-search";
 import { searchAllJobs } from "@/lib/connectors/alljobs";
+import { searchDrushim } from "@/lib/connectors/drushim";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -17,7 +18,7 @@ const inputSchema = z.object({
   remoteOk: z.boolean().optional(),
   recentDays: z.union([z.literal(1), z.literal(3), z.literal(7), z.literal(14), z.literal(30)]).optional(),
   workdayBoards: z.array(z.string()).optional(),
-  sources: z.array(z.enum(["linkedin", "workday", "alljobs"])).default(["linkedin", "workday"]),
+  sources: z.array(z.enum(["linkedin", "workday", "alljobs", "drushim"])).default(["linkedin", "workday", "alljobs"]),
 });
 
 export async function POST(req: NextRequest) {
@@ -71,6 +72,15 @@ export async function POST(req: NextRequest) {
       searchAllJobs({ keywords: alljobsKeywords, maxResults: 40 })
         .then((jobs) => ({ source: "alljobs" as const, jobs }))
         .catch((err: Error) => ({ source: "alljobs" as const, jobs: [], error: err.message })),
+    );
+  }
+
+  if (sources.includes("drushim")) {
+    const drushimKeywords = keywordsHe.trim() || keywords;
+    tasks.push(
+      searchDrushim({ keywords: drushimKeywords, maxResults: 40 })
+        .then((jobs) => ({ source: "drushim" as const, jobs }))
+        .catch((err: Error) => ({ source: "drushim" as const, jobs: [], error: err.message })),
     );
   }
 
