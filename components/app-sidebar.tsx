@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   FileText,
@@ -18,8 +19,16 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
+import { store } from "@/lib/storage";
 
-const NAV: { href: string; key: Key; icon: React.ComponentType<{ className?: string }> }[] = [
+type NavItem = {
+  href: string;
+  key: Key;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: () => number;
+};
+
+const NAV: NavItem[] = [
   { href: "/", key: "nav.dashboard", icon: LayoutDashboard },
   { href: "/cv", key: "nav.cv", icon: FileText },
   { href: "/jobs", key: "nav.jobs", icon: Briefcase },
@@ -35,12 +44,32 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { t, lang, setLang, dir } = useLang();
   const sideClass = dir === "rtl" ? "border-l" : "border-r";
+  const [interviewCount, setInterviewCount] = useState(0);
+  const [staleCount, setStaleCount] = useState(0);
+
+  useEffect(() => {
+    const jobs = store.getJobs();
+    setInterviewCount(jobs.filter((j) => j.status === "interview").length);
+    const now = Date.now();
+    setStaleCount(
+      jobs.filter((j) => {
+        if (!["applied", "screen"].includes(j.status)) return false;
+        const ref = j.appliedAt ?? j.createdAt;
+        return (now - new Date(ref).getTime()) / 86_400_000 > 7;
+      }).length,
+    );
+  }, []);
+
+  const badges: Record<string, number> = {};
+  if (interviewCount > 0) badges["/applications"] = interviewCount;
+  if (staleCount > 0) badges["/jobs"] = (badges["/jobs"] ?? 0) + staleCount;
 
   return (
     <aside
       className={cn(
         "hidden md:flex w-64 shrink-0 flex-col bg-sidebar/60 backdrop-blur-xl",
         sideClass,
+        "border-border/50",
       )}
     >
       <div className="px-5 py-5 border-b border-border/50">
@@ -56,19 +85,21 @@ export function AppSidebar() {
           </div>
         </Link>
       </div>
-      <nav className="flex-1 p-3 space-y-1">
+
+      <nav className="flex-1 p-3 space-y-0.5">
         {NAV.map(({ href, key, icon: Icon }) => {
           const active =
             href === "/" ? pathname === "/" : pathname.startsWith(href);
+          const badge = badges[href];
           return (
             <Link
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all relative group",
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all relative",
                 active
                   ? "bg-gradient-to-r from-primary/20 to-primary/5 text-foreground border border-primary/20 shadow-sm"
-                  : "text-muted-foreground hover:bg-accent/40 hover:text-foreground",
+                  : "text-muted-foreground hover:bg-accent/40 hover:text-foreground border border-transparent",
               )}
             >
               <Icon
@@ -77,11 +108,17 @@ export function AppSidebar() {
                   active ? "text-primary" : "",
                 )}
               />
-              {t(key)}
+              <span className="flex-1">{t(key)}</span>
+              {badge ? (
+                <span className="size-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold grid place-items-center">
+                  {badge}
+                </span>
+              ) : null}
             </Link>
           );
         })}
       </nav>
+
       <div className="p-3 border-t border-border/50 space-y-2">
         <Button
           variant="outline"
@@ -92,8 +129,8 @@ export function AppSidebar() {
           <Languages className="size-4" />
           {lang === "he" ? "English" : "עברית"}
         </Button>
-        <div className="text-[10px] text-muted-foreground/70 text-center">
-          v0.1 · MVP
+        <div className="text-[10px] text-muted-foreground/50 text-center">
+          v0.2 · Beta
         </div>
       </div>
     </aside>

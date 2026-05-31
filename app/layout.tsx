@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Heebo, Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { AppSidebar } from "@/components/app-sidebar";
+import { MobileNav } from "@/components/mobile-nav";
+import { MobileHeader } from "@/components/mobile-header";
 import { LangProvider } from "@/components/lang-provider";
 import "./globals.css";
 
@@ -80,8 +82,12 @@ export default function RootLayout({
         <LangProvider>
           <div className="flex min-h-screen">
             <AppSidebar />
-            <main className="flex-1 overflow-x-hidden">{children}</main>
+            <div className="flex-1 flex flex-col overflow-x-hidden">
+              <MobileHeader />
+              <main className="flex-1">{children}</main>
+            </div>
           </div>
+          <MobileNav />
           <Toaster richColors position="top-center" theme="dark" />
         </LangProvider>
       </body>
