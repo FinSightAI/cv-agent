@@ -96,7 +96,7 @@ export default function RootLayout({
               </div>
               <MobileNav />
               <CommandPalette />
-              <Toaster richColors position="top-center" theme="dark" />
+              <Toaster richColors position="top-center" theme="system" />
             </LangProvider>
           </ThemeProvider>
         </body>

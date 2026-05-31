@@ -21,6 +21,10 @@ import {
   Mail,
   BrainCircuit,
   ChevronRight,
+  Archive,
+  Bell,
+  Cloud,
+  Moon,
 } from "lucide-react";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
@@ -141,6 +145,40 @@ export default function HelpPage() {
             descKey="help.modules.agent.desc"
             href="/agent"
           />
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">פיצ'רים נוספים</h2>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="glass rounded-xl p-4 space-y-1 border border-border/40">
+            <div className="flex items-center gap-2 font-medium text-sm">
+              <Archive className="size-4 text-primary" />
+              הורדת חבילת הגשה (ZIP)
+            </div>
+            <p className="text-xs text-muted-foreground">כפתור ZIP בדף המשרה מאגד: מכתב מקדים, CV מותאם ב-Markdown, ומידע על המשרה — לארכיון מסודר.</p>
+          </div>
+          <div className="glass rounded-xl p-4 space-y-1 border border-border/40">
+            <div className="flex items-center gap-2 font-medium text-sm">
+              <Bell className="size-4 text-amber-400" />
+              תזכורות follow-up
+            </div>
+            <p className="text-xs text-muted-foreground">בכל משרה אפשר לקבוע תאריך תזכורת. הדשבורד יזכיר לך כשמגיע הזמן לעשות follow-up.</p>
+          </div>
+          <div className="glass rounded-xl p-4 space-y-1 border border-border/40">
+            <div className="flex items-center gap-2 font-medium text-sm">
+              <Moon className="size-4 text-blue-400" />
+              מצב יום/לילה
+            </div>
+            <p className="text-xs text-muted-foreground">כפתור מצב לילה/יום בתחתית הסיידבר (ובכותרת הנייד). ההעדפה נשמרת בין ביקורים.</p>
+          </div>
+          <div className="glass rounded-xl p-4 space-y-1 border border-border/40">
+            <div className="flex items-center gap-2 font-medium text-sm">
+              <Cloud className="size-4 text-green-400" />
+              סנכרון לענן (Neon DB)
+            </div>
+            <p className="text-xs text-muted-foreground">בהגדרות → "סנכרן לענן" — שולח את כל הנתונים מה-localStorage ל-Neon Postgres. דורש DATABASE_URL ב-Vercel.</p>
+          </div>
         </div>
       </section>
 
