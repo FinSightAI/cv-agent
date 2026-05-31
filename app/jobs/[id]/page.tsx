@@ -42,7 +42,9 @@ import {
   Archive,
   Bell,
   BellOff,
+  Mic,
 } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { store, type StoredJob } from "@/lib/storage";
 import type {
@@ -278,6 +280,12 @@ export default function JobDetailPage() {
           )}
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
+          <Link href={`/jobs/${id}/simulate`}>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Mic className="size-4" />
+              {t("sim.title")}
+            </Button>
+          </Link>
           {(job.coverLetter || job.tailoredResume) && (
             <Button variant="outline" size="sm" onClick={downloadZip} title="הורד חבילת הגשה">
               <Archive className="size-4 me-1.5" />

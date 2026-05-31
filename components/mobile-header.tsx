@@ -18,6 +18,7 @@ const PAGE_TITLES: Record<string, Key> = {
   "/agent": "nav.agent",
   "/connectors": "nav.connectors",
   "/settings": "nav.settings",
+  "/stats": "nav.stats",
   "/help": "nav.help",
 };
 

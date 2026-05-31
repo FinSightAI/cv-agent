@@ -12,6 +12,17 @@ import type {
   InterviewPrep,
 } from "@/lib/ai/schemas";
 
+export type InterviewDebrief = {
+  confidence: number;
+  technicalPrep: number;
+  rapportWithInterviewer: number;
+  communicationClarity: number;
+  overallPreparation: number;
+  hardestQuestion: string;
+  wouldDoDifferently: string;
+  recordedAt: string;
+};
+
 const RESUME_KEY = "cv-agent:resume:v1";
 const JOBS_KEY = "cv-agent:jobs:v1";
 const PREFS_KEY = "cv-agent:prefs:v1";
@@ -46,6 +57,7 @@ export type StoredJob = {
   notes?: string;
   appliedAt?: string;
   followUpAt?: string;
+  debrief?: InterviewDebrief;
   createdAt: string;
 };
 

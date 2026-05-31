@@ -161,9 +161,17 @@ export default function Home() {
     <div className="container max-w-5xl mx-auto p-4 md:p-6 lg:p-10 space-y-8 pb-20 md:pb-10">
       {/* Header */}
       <header className="space-y-3">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs text-primary">
-          <Sparkles className="size-3" />
-          AI-powered
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs text-primary">
+            <Sparkles className="size-3" />
+            AI-powered
+          </div>
+          {jobs.length > 0 && (
+            <Link href="/stats" className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-xs text-muted-foreground hover:text-foreground hover:border-border transition-colors">
+              <TrendingUp className="size-3" />
+              ראה ניתוח מלא
+            </Link>
+          )}
         </div>
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent">
           {t("dashboard.greeting")}

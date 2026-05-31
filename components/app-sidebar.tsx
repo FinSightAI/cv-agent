@@ -15,6 +15,7 @@ import {
   Inbox,
   HelpCircle,
   Search,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ const NAV: NavItem[] = [
   { href: "/inbox", key: "nav.inbox", icon: Inbox },
   { href: "/agent", key: "nav.agent", icon: Sparkles },
   { href: "/connectors", key: "nav.connectors", icon: Plug },
+  { href: "/stats", key: "nav.stats", icon: BarChart3 },
   { href: "/settings", key: "nav.settings", icon: Settings },
   { href: "/help", key: "nav.help", icon: HelpCircle },
 ];
