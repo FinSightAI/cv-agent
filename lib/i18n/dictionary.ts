@@ -635,6 +635,37 @@ export const dictionary = {
     "sim.interviewer": "מראיין",
     "sim.you": "אתה",
     "sim.restart": "ראיון חדש",
+
+    // Readiness score
+    "readiness.title": "מוכן להגשה",
+    "readiness.apply": "הגש עכשיו",
+
+    // Salary negotiation
+    "salary.title": "ייעוץ משא ומתן על שכר",
+    "salary.offer.received": "🎉 קיבלת הצעה!",
+    "salary.offeredSalary": "שכר שהוצע",
+    "salary.generate": "צור אסטרטגיית משא ומתן",
+    "salary.generating": "מנתח...",
+    "salary.script": "סקריפט למשא ומתן",
+    "salary.leverage": "נקודות מינוף",
+    "salary.risk.low": "סיכון נמוך",
+    "salary.risk.medium": "סיכון בינוני",
+    "salary.risk.high": "סיכון גבוה",
+    "salary.opening": "פתיחה מומלצת",
+    "salary.counterRange": "טווח מוצע לבקשה",
+    "salary.perks": "תוספות שאפשר לבקש",
+
+    // Interview debrief
+    "debrief.title": "דברוף ראיון",
+    "debrief.save": "שמור דברוף",
+    "debrief.saved": "נשמר",
+    "debrief.confidence": "ביטחון עצמי",
+    "debrief.technicalPrep": "ידע טכני",
+    "debrief.rapport": "כימיה עם המראיין",
+    "debrief.clarity": "בהירות תקשורת",
+    "debrief.preparation": "מוכנות כללית",
+    "debrief.hardest": "השאלה הקשה ביותר",
+    "debrief.different": "מה היית עושה אחרת",
   },
   en: {
     "brand.name": "CV Agent",
@@ -1255,6 +1286,37 @@ export const dictionary = {
     "sim.interviewer": "Interviewer",
     "sim.you": "You",
     "sim.restart": "New Interview",
+
+    // Readiness score
+    "readiness.title": "Ready to apply",
+    "readiness.apply": "Apply Now",
+
+    // Salary negotiation
+    "salary.title": "Salary Negotiation Coach",
+    "salary.offer.received": "🎉 You received an offer!",
+    "salary.offeredSalary": "Offered salary",
+    "salary.generate": "Generate negotiation strategy",
+    "salary.generating": "Analyzing...",
+    "salary.script": "Negotiation script",
+    "salary.leverage": "Leverage points",
+    "salary.risk.low": "Low risk",
+    "salary.risk.medium": "Medium risk",
+    "salary.risk.high": "High risk",
+    "salary.opening": "Recommended opening line",
+    "salary.counterRange": "Suggested counter-offer range",
+    "salary.perks": "Non-salary perks to request",
+
+    // Interview debrief
+    "debrief.title": "Interview Debrief",
+    "debrief.save": "Save debrief",
+    "debrief.saved": "Saved",
+    "debrief.confidence": "Confidence",
+    "debrief.technicalPrep": "Technical knowledge",
+    "debrief.rapport": "Rapport with interviewer",
+    "debrief.clarity": "Communication clarity",
+    "debrief.preparation": "Overall preparation",
+    "debrief.hardest": "Hardest question",
+    "debrief.different": "What would you do differently",
   },
 } as const;
 

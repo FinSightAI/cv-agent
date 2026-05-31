@@ -47,6 +47,10 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { store, type StoredJob } from "@/lib/storage";
+import { ReadinessScore } from "@/components/readiness-score";
+import { SalaryNegotiation } from "@/components/salary-negotiation";
+import { InterviewDebrief } from "@/components/interview-debrief";
+import { TurboApply } from "@/components/turbo-apply";
 import type {
   CVSuggestion,
   CVSuggestions,
@@ -353,6 +357,26 @@ export default function JobDetailPage() {
         />
         <p className="text-[10px] text-muted-foreground mt-1">{t("job.notes")}</p>
       </div>
+
+      {/* Readiness score + Turbo Apply */}
+      <div className="print-hide grid gap-4 md:grid-cols-2">
+        <ReadinessScore job={job} />
+        <div className="flex flex-col justify-end gap-2">
+          <TurboApply job={job} />
+        </div>
+      </div>
+
+      {/* Status-aware contextual panels */}
+      {job.status === "interview" && (
+        <div className="print-hide">
+          <InterviewDebrief job={job} setJob={setJob} />
+        </div>
+      )}
+      {job.status === "offer" && (
+        <div className="print-hide">
+          <SalaryNegotiation job={job} />
+        </div>
+      )}
 
       <Tabs defaultValue="match" className="print-hide">
         <TabsList className="flex flex-nowrap overflow-x-auto w-full justify-start h-auto p-1 gap-0.5">

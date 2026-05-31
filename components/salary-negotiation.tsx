@@ -144,7 +144,7 @@ export function SalaryNegotiation({ job }: { job: StoredJob }) {
                 onChange={(e) => setOfferedSalary(e.target.value)}
                 className="bg-background/50"
               />
-              <Select value={currency} onValueChange={setCurrency}>
+              <Select value={currency} onValueChange={(v) => setCurrency(v ?? "ILS")}>
                 <SelectTrigger className="w-24 bg-background/50">
                   <SelectValue />
                 </SelectTrigger>
