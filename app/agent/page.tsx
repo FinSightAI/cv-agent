@@ -86,7 +86,7 @@ export default function AgentPage() {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-6 lg:p-10 space-y-6 h-[calc(100vh-2rem)] flex flex-col">
+    <div className="container max-w-4xl mx-auto p-4 md:p-6 lg:p-10 space-y-4 md:space-y-6 h-[calc(100dvh-10rem)] md:h-[calc(100dvh-2rem)] flex flex-col">
       <header className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">

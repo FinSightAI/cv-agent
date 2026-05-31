@@ -14,6 +14,7 @@ import {
   Languages,
   Inbox,
   HelpCircle,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -120,6 +121,19 @@ export function AppSidebar() {
       </nav>
 
       <div className="p-3 border-t border-border/50 space-y-2">
+        <button
+          className="w-full flex items-center gap-2 rounded-lg border border-border/50 bg-muted/20 px-3 py-2 text-xs text-muted-foreground hover:bg-muted/40 hover:border-border transition-all"
+          onClick={() => {
+            const e = new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true });
+            document.dispatchEvent(e);
+          }}
+        >
+          <Search className="size-3.5" />
+          <span className="flex-1 text-start">{lang === "he" ? "חיפוש..." : "Search..."}</span>
+          <kbd className="hidden sm:inline-flex h-4 items-center rounded border border-border bg-background px-1 font-mono text-[9px]">
+            ⌘K
+          </kbd>
+        </button>
         <Button
           variant="outline"
           size="sm"

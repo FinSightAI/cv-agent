@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AppSidebar } from "@/components/app-sidebar";
 import { MobileNav } from "@/components/mobile-nav";
 import { MobileHeader } from "@/components/mobile-header";
+import { CommandPalette } from "@/components/command-palette";
 import { LangProvider } from "@/components/lang-provider";
 import "./globals.css";
 
@@ -88,6 +89,7 @@ export default function RootLayout({
             </div>
           </div>
           <MobileNav />
+          <CommandPalette />
           <Toaster richColors position="top-center" theme="dark" />
         </LangProvider>
       </body>
