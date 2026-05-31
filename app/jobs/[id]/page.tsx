@@ -279,6 +279,7 @@ export default function JobDetailPage() {
           <TabsTrigger value="suggest">{t("job.tab.suggest")}</TabsTrigger>
           <TabsTrigger value="tailor">{t("job.tab.tailor")}</TabsTrigger>
           <TabsTrigger value="letter">{t("job.tab.letter")}</TabsTrigger>
+          <TabsTrigger value="followup">{t("followup.title")}</TabsTrigger>
           <TabsTrigger value="details">{t("job.tab.details")}</TabsTrigger>
           <TabsTrigger value="interview">{t("job.tab.interview")}</TabsTrigger>
         </TabsList>
@@ -457,6 +458,10 @@ export default function JobDetailPage() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="followup" className="pt-4 space-y-4">
+          <FollowUpTab job={job} />
         </TabsContent>
 
         <TabsContent value="interview" className="pt-4 space-y-4">
@@ -1199,6 +1204,153 @@ function InterviewQuestionCard({ q }: { q: InterviewQuestion }) {
               <Copy className="size-3 me-1.5" />
               {t("common.copy")}
             </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function FollowUpTab({ job }: { job: StoredJob }) {
+  const { t } = useLang();
+  const [busy, setBusy] = useState(false);
+  const [language, setLanguage] = useState<"he" | "en">("he");
+  const [email, setEmail] = useState<{ subject: string; body: string } | null>(null);
+
+  const daysAgo = job.appliedAt
+    ? Math.floor((Date.now() - new Date(job.appliedAt).getTime()) / 86_400_000)
+    : undefined;
+
+  async function generate() {
+    const resume = store.getResume();
+    if (!resume) {
+      toast.error(t("followup.noResume"));
+      return;
+    }
+    setBusy(true);
+    try {
+      const data = await aiFetchJson<{ result: { subject: string; body: string } }>(
+        "/api/followup",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            resume: resume.parsed,
+            job: job.parsed,
+            language,
+            daysAgo,
+          }),
+        },
+        { t, fallback: t("followup.failed") },
+      );
+      setEmail(data.result);
+      toast.success(t("followup.ready"));
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const isApplied = ["applied", "screen", "interview"].includes(job.status);
+
+  return (
+    <Card className="glass">
+      <CardHeader>
+        <CardTitle>{t("followup.title")}</CardTitle>
+        <CardDescription>
+          {t("followup.desc")}
+          {daysAgo != null && (
+            <span className="ms-2 text-amber-400">
+              · {daysAgo} {t("followup.daysAgo")}
+            </span>
+          )}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {!isApplied && (
+          <p className="text-sm text-muted-foreground">
+            הגש את המשרה תחילה (עדכן סטטוס ל"הוגש") כדי ליצור follow-up.
+          </p>
+        )}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">{t("followup.language")}</label>
+            <Select value={language} onValueChange={(v) => setLanguage(v as "he" | "en")}>
+              <SelectTrigger className="w-28 h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="he">עברית</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            onClick={generate}
+            disabled={busy}
+            variant={email ? "outline" : "default"}
+            className="self-end"
+          >
+            {busy ? (
+              <>
+                <Loader2 className="size-4 me-2 animate-spin" />
+                {t("followup.writing")}
+              </>
+            ) : (
+              <>
+                <Sparkles className="size-4 me-2" />
+                {email ? t("followup.regenerate") : t("followup.run")}
+              </>
+            )}
+          </Button>
+        </div>
+
+        {email && (
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                {t("followup.subject")}
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 rounded-md border border-border/50 bg-muted/20 px-3 py-2 text-sm font-medium">
+                  {email.subject}
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="size-8 shrink-0"
+                  onClick={() => {
+                    navigator.clipboard.writeText(email.subject);
+                    toast.success(t("common.copied"));
+                  }}
+                >
+                  <Copy className="size-3.5" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                {t("followup.body")}
+              </p>
+              <div className="relative">
+                <div className="rounded-md border border-border/50 bg-muted/20 px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
+                  {email.body}
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="absolute top-2 end-2 h-7 text-xs gap-1"
+                  onClick={() => {
+                    navigator.clipboard.writeText(email.body);
+                    toast.success(t("common.copied"));
+                  }}
+                >
+                  <Copy className="size-3" />
+                  {t("followup.copy")}
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </CardContent>
