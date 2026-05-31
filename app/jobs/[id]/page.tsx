@@ -212,7 +212,7 @@ export default function JobDetailPage() {
   const { parsed, match } = job;
 
   return (
-    <div className="container max-w-5xl mx-auto p-6 lg:p-10 space-y-6">
+    <div className="container max-w-5xl mx-auto p-4 md:p-6 lg:p-10 space-y-4 md:space-y-6">
       <header className="flex items-start justify-between gap-4 flex-wrap">
         <div className="space-y-1 min-w-0">
           <h1 className="text-3xl font-bold">{parsed.title}</h1>
@@ -274,14 +274,14 @@ export default function JobDetailPage() {
       </div>
 
       <Tabs defaultValue="match" className="print-hide">
-        <TabsList>
-          <TabsTrigger value="match">{t("job.tab.match")}</TabsTrigger>
-          <TabsTrigger value="suggest">{t("job.tab.suggest")}</TabsTrigger>
-          <TabsTrigger value="tailor">{t("job.tab.tailor")}</TabsTrigger>
-          <TabsTrigger value="letter">{t("job.tab.letter")}</TabsTrigger>
-          <TabsTrigger value="followup">{t("followup.title")}</TabsTrigger>
-          <TabsTrigger value="details">{t("job.tab.details")}</TabsTrigger>
-          <TabsTrigger value="interview">{t("job.tab.interview")}</TabsTrigger>
+        <TabsList className="flex flex-nowrap overflow-x-auto w-full justify-start h-auto p-1 gap-0.5">
+          <TabsTrigger value="match" className="shrink-0 text-xs">{t("job.tab.match")}</TabsTrigger>
+          <TabsTrigger value="suggest" className="shrink-0 text-xs">{t("job.tab.suggest")}</TabsTrigger>
+          <TabsTrigger value="tailor" className="shrink-0 text-xs">{t("job.tab.tailor")}</TabsTrigger>
+          <TabsTrigger value="letter" className="shrink-0 text-xs">{t("job.tab.letter")}</TabsTrigger>
+          <TabsTrigger value="followup" className="shrink-0 text-xs">{t("followup.title")}</TabsTrigger>
+          <TabsTrigger value="interview" className="shrink-0 text-xs">{t("job.tab.interview")}</TabsTrigger>
+          <TabsTrigger value="details" className="shrink-0 text-xs">{t("job.tab.details")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="match" className="pt-4 space-y-4">
