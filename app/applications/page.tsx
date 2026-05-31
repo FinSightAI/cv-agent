@@ -136,14 +136,8 @@ export default function ApplicationsPage() {
                             </CardDescription>
                           </div>
                           <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="size-5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <GripVertical className="size-3" />
-                              </Button>
+                            <DropdownMenuTrigger className="size-5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center justify-center rounded hover:bg-accent">
+                              <GripVertical className="size-3" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">
                               {COLUMNS.filter((c) => c.status !== j.status).map(

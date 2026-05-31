@@ -662,6 +662,7 @@ export const dictionary = {
     "help.faq.a4":
       "No. This is a co-pilot — it prepares everything and you click Submit. Auto-submission violates most job-portal ToS and hurts your chances of getting through.",
     "help.faq.q5": "Gmail integration isn't working",
+    "help.faq.q5.alt": "",
     "help.faq.a5":
       "You need to set up your own Google OAuth client in Google Cloud Console and add the credentials as env vars in Vercel. See setup below.",
     "help.gmail.title": "Gmail Integration setup",

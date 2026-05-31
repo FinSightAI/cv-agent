@@ -66,7 +66,8 @@ function parseRss(xml: string, max: number): ConnectorJob[] {
 
 function parseFields(
   $: ReturnType<typeof cheerio.load>,
-  el: cheerio.Element,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  el: any,
   desc: string,
   title: string,
 ): { company: string; location?: string } {

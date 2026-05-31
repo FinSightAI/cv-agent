@@ -295,13 +295,11 @@ function DataManagementCard() {
           <Download className="size-4 me-2" />
           ייצא גיבוי
         </Button>
-        <Button variant="outline" size="sm" asChild>
-          <label className="cursor-pointer">
-            <Upload className="size-4 me-2" />
-            ייבא גיבוי
-            <input type="file" accept=".json" className="hidden" onChange={importData} />
-          </label>
-        </Button>
+        <label className="cursor-pointer inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+          <Upload className="size-4" />
+          ייבא גיבוי
+          <input type="file" accept=".json" className="hidden" onChange={importData} />
+        </label>
         <Button
           variant="outline"
           size="sm"
