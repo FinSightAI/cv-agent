@@ -19,6 +19,7 @@ import {
   Plug,
   Lightbulb,
   Mail,
+  BrainCircuit,
   ChevronRight,
 } from "lucide-react";
 import { useLang } from "@/components/lang-provider";
@@ -103,6 +104,11 @@ export default function HelpPage() {
               icon={Mail}
               titleKey="help.tabs.letter.title"
               descKey="help.tabs.letter.desc"
+            />
+            <FeatureRow
+              icon={BrainCircuit}
+              titleKey="help.tabs.interview.title"
+              descKey="help.tabs.interview.desc"
             />
           </CardContent>
         </Card>

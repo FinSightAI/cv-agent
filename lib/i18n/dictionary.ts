@@ -34,6 +34,9 @@ export const dictionary = {
     "help.tabs.letter.title": "מכתב מקדים",
     "help.tabs.letter.desc":
       "מכתב 180-260 מילים בעברית או באנגלית, בטון לבחירה. עם streaming — תראה אותו נכתב בזמן אמת.",
+    "help.tabs.interview.title": "הכנה לראיון",
+    "help.tabs.interview.desc":
+      "8-15 שאלות צפויות מבוססות על המשרה וה-CV שלך — התנהגותיות, טכניות, מצביות — עם תשובות STAR מוצעות ורמת קושי לכל שאלה.",
     "help.modules.title": "מודולים נוספים",
     "help.modules.jobs.title": "משרות",
     "help.modules.jobs.desc":
@@ -517,6 +520,32 @@ export const dictionary = {
 
     // Rate limit
     "error.rateLimit": "יותר מדי בקשות. נסה שוב בעוד דקה.",
+
+    // Interview prep
+    "job.tab.interview": "הכנה לראיון",
+    "interview.title": "שאלות ראיון",
+    "interview.desc": "שאלות צפויות מבוססות על המשרה וה-CV שלך, עם תשובות מוצעות.",
+    "interview.run": "הכן שאלות ראיון",
+    "interview.regenerate": "הכן מחדש",
+    "interview.running": "מכין שאלות...",
+    "interview.success": "שאלות מוכנות",
+    "interview.failed": "הכנת שאלות נכשלה",
+    "interview.noResume": "העלה קורות חיים תחילה",
+    "interview.prepNotes": "הערות הכנה",
+    "interview.keyThemes": "נושאים מרכזיים",
+    "interview.suggestedAnswer": "תשובה מוצעת",
+    "interview.tips": "טיפים",
+    "interview.showAnswer": "הצג תשובה",
+    "interview.hideAnswer": "הסתר תשובה",
+    "interview.category.behavioral": "התנהגותי",
+    "interview.category.technical": "טכני",
+    "interview.category.situational": "מצבי",
+    "interview.category.company_culture": "תרבות ארגונית",
+    "interview.category.role_specific": "תפקיד ספציפי",
+    "interview.difficulty.easy": "קל",
+    "interview.difficulty.medium": "בינוני",
+    "interview.difficulty.hard": "מאתגר",
+    "interview.count": "שאלות",
   },
   en: {
     "brand.name": "CV Agent",
@@ -552,6 +581,9 @@ export const dictionary = {
     "help.tabs.letter.title": "Cover letter",
     "help.tabs.letter.desc":
       "180-260 word letter in your chosen language and tone. Streams live as the model writes.",
+    "help.tabs.interview.title": "Interview prep",
+    "help.tabs.interview.desc":
+      "8-15 likely interview questions based on the job and your resume — behavioral, technical, situational — with suggested STAR answers and a difficulty level per question.",
     "help.modules.title": "Other modules",
     "help.modules.jobs.title": "Jobs",
     "help.modules.jobs.desc":
@@ -1020,6 +1052,32 @@ export const dictionary = {
 
     // Rate limit
     "error.rateLimit": "Too many requests. Try again in a minute.",
+
+    // Interview prep
+    "job.tab.interview": "Interview prep",
+    "interview.title": "Interview questions",
+    "interview.desc": "Likely questions based on this job and your resume, with suggested answers.",
+    "interview.run": "Generate interview questions",
+    "interview.regenerate": "Regenerate",
+    "interview.running": "Preparing questions...",
+    "interview.success": "Questions ready",
+    "interview.failed": "Failed to prepare questions",
+    "interview.noResume": "Upload a resume first",
+    "interview.prepNotes": "Preparation notes",
+    "interview.keyThemes": "Key themes",
+    "interview.suggestedAnswer": "Suggested answer",
+    "interview.tips": "Tips",
+    "interview.showAnswer": "Show answer",
+    "interview.hideAnswer": "Hide answer",
+    "interview.category.behavioral": "Behavioral",
+    "interview.category.technical": "Technical",
+    "interview.category.situational": "Situational",
+    "interview.category.company_culture": "Culture fit",
+    "interview.category.role_specific": "Role-specific",
+    "interview.difficulty.easy": "Easy",
+    "interview.difficulty.medium": "Medium",
+    "interview.difficulty.hard": "Hard",
+    "interview.count": "questions",
   },
 } as const;
 

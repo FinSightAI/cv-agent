@@ -36,12 +36,17 @@ import {
   Wand2,
   Lightbulb,
   ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  BrainCircuit,
 } from "lucide-react";
 import { toast } from "sonner";
 import { store, type StoredJob } from "@/lib/storage";
 import type {
   CVSuggestion,
   CVSuggestions,
+  InterviewPrep,
+  InterviewQuestion,
   MatchResult,
   ParsedResume,
   TailoredResume,
@@ -240,6 +245,7 @@ export default function JobDetailPage() {
           <TabsTrigger value="tailor">{t("job.tab.tailor")}</TabsTrigger>
           <TabsTrigger value="letter">{t("job.tab.letter")}</TabsTrigger>
           <TabsTrigger value="details">{t("job.tab.details")}</TabsTrigger>
+          <TabsTrigger value="interview">{t("job.tab.interview")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="match" className="pt-4 space-y-4">
@@ -416,6 +422,10 @@ export default function JobDetailPage() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="interview" className="pt-4 space-y-4">
+          <InterviewTab job={job} setJob={setJob} />
         </TabsContent>
       </Tabs>
     </div>
@@ -957,6 +967,205 @@ function SuggestionCard({ s }: { s: CVSuggestion }) {
             {t("suggest.copySuggested")}
           </Button>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function InterviewTab({
+  job,
+  setJob,
+}: {
+  job: StoredJob;
+  setJob: React.Dispatch<React.SetStateAction<StoredJob | null>>;
+}) {
+  const { t } = useLang();
+  const [busy, setBusy] = useState(false);
+  const prep = job.interviewPrep;
+
+  async function generate() {
+    const resume = store.getResume();
+    if (!resume) {
+      toast.error(t("interview.noResume"));
+      return;
+    }
+    setBusy(true);
+    try {
+      const data = await aiFetchJson<{ result: InterviewPrep }>(
+        "/api/interview/questions",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ resume: resume.parsed, job: job.parsed }),
+        },
+        { t, fallback: t("interview.failed") },
+      );
+      const updated: StoredJob = { ...job, interviewPrep: data.result };
+      store.saveJob(updated);
+      setJob(updated);
+      toast.success(t("interview.success"));
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!prep) {
+    if (busy) return <AILoadingSkeleton kind="match" />;
+    return (
+      <Card className="glass">
+        <CardHeader>
+          <CardTitle>{t("interview.title")}</CardTitle>
+          <CardDescription>{t("interview.desc")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={generate} disabled={busy}>
+            <BrainCircuit className="size-4 me-2" />
+            {t("interview.run")}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const byCategory = prep.questions.reduce<Record<string, InterviewQuestion[]>>(
+    (acc, q) => {
+      (acc[q.category] ??= []).push(q);
+      return acc;
+    },
+    {},
+  );
+
+  return (
+    <div className="space-y-4">
+      <Card className="glass">
+        <CardHeader>
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div className="space-y-1 min-w-0">
+              <CardTitle className="text-base flex items-center gap-2">
+                <BrainCircuit className="size-4 text-primary" />
+                {t("interview.title")} · {prep.questions.length} {t("interview.count")}
+              </CardTitle>
+              {prep.prepNotes && (
+                <CardDescription>{prep.prepNotes}</CardDescription>
+              )}
+            </div>
+            <Button size="sm" variant="outline" onClick={generate} disabled={busy}>
+              {busy ? (
+                <Loader2 className="size-4 me-2 animate-spin" />
+              ) : (
+                <Sparkles className="size-4 me-2" />
+              )}
+              {t("interview.regenerate")}
+            </Button>
+          </div>
+        </CardHeader>
+        {prep.keyThemes.length > 0 && (
+          <CardContent>
+            <p className="text-xs text-muted-foreground mb-2">{t("interview.keyThemes")}</p>
+            <div className="flex flex-wrap gap-2">
+              {prep.keyThemes.map((theme) => (
+                <Badge key={theme} variant="secondary">
+                  {theme}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
+      {(["behavioral", "technical", "situational", "role_specific", "company_culture"] as const).map((cat) => {
+        const qs = byCategory[cat];
+        if (!qs || qs.length === 0) return null;
+        return (
+          <div key={cat} className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {t(`interview.category.${cat}` as Key)} · {qs.length}
+            </h3>
+            {qs.map((q, i) => (
+              <InterviewQuestionCard key={`${cat}-${i}`} q={q} />
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function InterviewQuestionCard({ q }: { q: InterviewQuestion }) {
+  const { t } = useLang();
+  const [open, setOpen] = useState(false);
+  const diffColor =
+    q.difficulty === "hard"
+      ? "bg-red-500/15 text-red-400 border-red-500/30"
+      : q.difficulty === "medium"
+      ? "bg-amber-500/15 text-amber-400 border-amber-500/30"
+      : "bg-green-500/15 text-green-400 border-green-500/30";
+
+  return (
+    <Card className="glass">
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm font-medium leading-snug">{q.question}</p>
+          <span className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium border ${diffColor}`}>
+            {t(`interview.difficulty.${q.difficulty}` as Key)}
+          </span>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-0 space-y-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs text-muted-foreground"
+          onClick={() => setOpen((v) => !v)}
+        >
+          {open ? (
+            <>
+              <ChevronUp className="size-3 me-1" />
+              {t("interview.hideAnswer")}
+            </>
+          ) : (
+            <>
+              <ChevronDown className="size-3 me-1" />
+              {t("interview.showAnswer")}
+            </>
+          )}
+        </Button>
+        {open && (
+          <div className="space-y-3">
+            <div className="rounded-md bg-muted/40 px-4 py-3 text-sm leading-relaxed">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                {t("interview.suggestedAnswer")}
+              </p>
+              {q.suggestedAnswer}
+            </div>
+            {q.tips && q.tips.length > 0 && (
+              <div className="space-y-1">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t("interview.tips")}
+                </p>
+                <ul className="text-xs text-muted-foreground space-y-1 ps-4 list-disc">
+                  {q.tips.map((tip, i) => (
+                    <li key={i}>{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 text-xs"
+              onClick={() => {
+                navigator.clipboard.writeText(q.suggestedAnswer);
+                toast.success(t("common.copied"));
+              }}
+            >
+              <Copy className="size-3 me-1.5" />
+              {t("common.copy")}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

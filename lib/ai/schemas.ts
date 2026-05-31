@@ -163,3 +163,26 @@ export const cvSuggestionsSchema = z.object({
 
 export type CVSuggestion = z.infer<typeof cvSuggestionSchema>;
 export type CVSuggestions = z.infer<typeof cvSuggestionsSchema>;
+
+export const interviewQuestionSchema = z.object({
+  question: z.string(),
+  category: z.enum([
+    "behavioral",
+    "technical",
+    "situational",
+    "company_culture",
+    "role_specific",
+  ]),
+  difficulty: z.enum(["easy", "medium", "hard"]),
+  suggestedAnswer: z.string(),
+  tips: z.array(z.string()).optional(),
+});
+
+export const interviewPrepSchema = z.object({
+  questions: z.array(interviewQuestionSchema),
+  prepNotes: z.string().optional(),
+  keyThemes: z.array(z.string()).default([]),
+});
+
+export type InterviewQuestion = z.infer<typeof interviewQuestionSchema>;
+export type InterviewPrep = z.infer<typeof interviewPrepSchema>;
