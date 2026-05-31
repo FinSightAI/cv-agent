@@ -13,7 +13,7 @@ export function PrintableResume({
   lang: Lang;
 }) {
   const dir = lang === "he" ? "rtl" : "ltr";
-  const t = (k: keyof (typeof dictionary)["he"]) => dictionary[lang][k];
+  const t = (k: keyof (typeof dictionary)["he"]) => (dictionary[lang] as Record<typeof k, string>)[k];
   const todayStr = t("resume.present");
 
   return (

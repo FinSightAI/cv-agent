@@ -39,7 +39,7 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
     lang,
     dir: lang === "he" ? "rtl" : "ltr",
     setLang: setLangState,
-    t: (key) => dictionary[lang][key] ?? key,
+    t: (key) => (dictionary[lang] as Record<Key, string>)[key] ?? key,
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
