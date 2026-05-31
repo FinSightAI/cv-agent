@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/lang-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { UserButton } from "@/components/user-button";
 import type { Key } from "@/lib/i18n/dictionary";
 import { store } from "@/lib/storage";
 
@@ -146,6 +147,7 @@ export function AppSidebar() {
             {lang === "he" ? "English" : "עברית"}
           </Button>
           <ThemeToggle />
+          <UserButton />
         </div>
         <div className="text-[10px] text-muted-foreground/50 text-center">
           v0.2 · Beta

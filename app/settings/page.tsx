@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import { store, type StoredPreferences } from "@/lib/storage";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
-import { Download, Upload, Trash2 } from "lucide-react";
+import { Download, Upload, Trash2, Cloud, Loader2 } from "lucide-react";
 
 const EMPTY: StoredPreferences = {
   targetRoles: [],
@@ -237,6 +237,33 @@ export default function SettingsPage() {
 
 function DataManagementCard() {
   const { t } = useLang();
+  const [syncing, setSyncing] = useState(false);
+
+  async function syncToCloud() {
+    setSyncing(true);
+    try {
+      const resume = localStorage.getItem("cv-agent:resume:v1");
+      const jobsRaw = localStorage.getItem("cv-agent:jobs:v1");
+      const prefs = localStorage.getItem("cv-agent:prefs:v1");
+      const body = {
+        resume: resume ? JSON.parse(resume) : null,
+        jobs: jobsRaw ? JSON.parse(jobsRaw) : [],
+        prefs: prefs ? JSON.parse(prefs) : null,
+      };
+      const res = await fetch("/api/db/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Sync failed");
+      toast.success(`סונכרן: ${data.synced.jobs} משרות, ${data.synced.resume ? "CV" : "ללא CV"}`);
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   function exportData() {
     const data = {
@@ -288,9 +315,13 @@ function DataManagementCard() {
     <Card className="glass border-border/40">
       <CardHeader>
         <CardTitle className="text-base">ניהול נתונים</CardTitle>
-        <CardDescription>גיבוי, ייבוא, ומחיקה של כל הנתונים המקומיים</CardDescription>
+        <CardDescription>גיבוי, ייבוא, סנכרון לענן, ומחיקה של הנתונים המקומיים</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-3">
+        <Button variant="outline" size="sm" onClick={syncToCloud} disabled={syncing}>
+          {syncing ? <Loader2 className="size-4 me-2 animate-spin" /> : <Cloud className="size-4 me-2" />}
+          סנכרן לענן (Neon)
+        </Button>
         <Button variant="outline" size="sm" onClick={exportData}>
           <Download className="size-4 me-2" />
           ייצא גיבוי
