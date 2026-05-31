@@ -370,7 +370,7 @@ export default function JobDetailPage() {
       {/* Status-aware contextual panels */}
       {job.status === "interview" && (
         <div className="print-hide">
-          <InterviewDebrief job={job} setJob={setJob} />
+          <InterviewDebrief job={job} />
         </div>
       )}
       {job.status === "offer" && (
