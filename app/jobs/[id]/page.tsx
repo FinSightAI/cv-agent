@@ -51,6 +51,7 @@ import { ReadinessScore } from "@/components/readiness-score";
 import { SalaryNegotiation } from "@/components/salary-negotiation";
 import { InterviewDebrief } from "@/components/interview-debrief";
 import { TurboApply } from "@/components/turbo-apply";
+import { CompanyResearch } from "@/components/company-research";
 import type {
   CVSuggestion,
   CVSuggestions,
@@ -386,6 +387,7 @@ export default function JobDetailPage() {
           <TabsTrigger value="letter" className="shrink-0 text-xs">{t("job.tab.letter")}</TabsTrigger>
           <TabsTrigger value="followup" className="shrink-0 text-xs">{t("followup.title")}</TabsTrigger>
           <TabsTrigger value="interview" className="shrink-0 text-xs">{t("job.tab.interview")}</TabsTrigger>
+          <TabsTrigger value="company" className="shrink-0 text-xs">חברה 🔍</TabsTrigger>
           <TabsTrigger value="details" className="shrink-0 text-xs">{t("job.tab.details")}</TabsTrigger>
         </TabsList>
 
@@ -597,6 +599,10 @@ export default function JobDetailPage() {
 
         <TabsContent value="interview" className="pt-4 space-y-4">
           <InterviewTab job={job} setJob={setJob} />
+        </TabsContent>
+
+        <TabsContent value="company" className="pt-4 space-y-4">
+          <CompanyResearch job={job} />
         </TabsContent>
       </Tabs>
     </div>
