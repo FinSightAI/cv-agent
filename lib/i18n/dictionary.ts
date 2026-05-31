@@ -312,6 +312,10 @@ export const dictionary = {
     "status.rejectedFem": "נדחו",
     "status.update": "הסטטוס עודכן",
     "status.deleteConfirm": "למחוק את המשרה?",
+    "job.notes": "הערות אישיות",
+    "job.notes.placeholder": "אנשי קשר, פרטי שכר, שאלות לשאול, מה שצריך לזכור...",
+    "job.notes.saved": "הערות נשמרו",
+    "job.appliedAt": "הוגש ב",
 
     // Applications kanban
     "apps.title": "מעקב הגשות",
@@ -883,6 +887,10 @@ export const dictionary = {
     "status.rejectedFem": "Rejected",
     "status.update": "Status updated",
     "status.deleteConfirm": "Delete this job?",
+    "job.notes": "Personal notes",
+    "job.notes.placeholder": "Contacts, salary details, questions to ask, anything to remember...",
+    "job.notes.saved": "Notes saved",
+    "job.appliedAt": "Applied",
 
     "apps.title": "Applications pipeline",
     "apps.subtitle": "From \"saved\" to \"offer\" — the full pipeline",

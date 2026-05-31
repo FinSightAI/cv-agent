@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -56,7 +56,7 @@ import type { Key } from "@/lib/i18n/dictionary";
 import { PrintableResume } from "@/components/printable-resume";
 import { downloadMarkdown, resumeToMarkdown } from "@/lib/cv-export";
 import { AILoadingSkeleton } from "@/components/ai-loading-skeleton";
-import { aiFetchJson } from "@/lib/utils";
+import { aiFetchJson, formatDate } from "@/lib/utils";
 
 const STATUSES: StoredJob["status"][] = [
   "saved",
@@ -72,7 +72,7 @@ const STATUSES: StoredJob["status"][] = [
 ];
 
 export default function JobDetailPage() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [job, setJob] = useState<StoredJob | null>(null);
@@ -85,6 +85,8 @@ export default function JobDetailPage() {
       "professional",
     );
   const [language, setLanguage] = useState<"he" | "en">("he");
+  const [notes, setNotes] = useState("");
+  const notesTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const j = store.getJob(id);
@@ -95,7 +97,20 @@ export default function JobDetailPage() {
     }
     setJob(j);
     if (j.coverLetter) setLetter(j.coverLetter);
+    if (j.notes) setNotes(j.notes);
   }, [id, router, t]);
+
+  function handleNotesChange(val: string) {
+    setNotes(val);
+    if (notesTimer.current) clearTimeout(notesTimer.current);
+    notesTimer.current = setTimeout(() => {
+      if (!job) return;
+      const updated = { ...job, notes: val };
+      store.saveJob(updated);
+      setJob(updated);
+      toast.success(t("job.notes.saved"), { duration: 1500 });
+    }, 1200);
+  }
 
   async function runMatch() {
     if (!job) return;
@@ -237,6 +252,26 @@ export default function JobDetailPage() {
           </Button>
         </div>
       </header>
+
+      {/* Applied date */}
+      {job.appliedAt && (
+        <p className="text-xs text-muted-foreground">
+          {t("job.appliedAt")} {formatDate(job.appliedAt, lang)}
+        </p>
+      )}
+
+      {/* Notes — auto-save */}
+      <div className="print-hide">
+        <Textarea
+          rows={2}
+          value={notes}
+          onChange={(e) => handleNotesChange(e.target.value)}
+          placeholder={t("job.notes.placeholder")}
+          className="text-sm bg-muted/20 resize-none"
+          dir="auto"
+        />
+        <p className="text-[10px] text-muted-foreground mt-1">{t("job.notes")}</p>
+      </div>
 
       <Tabs defaultValue="match" className="print-hide">
         <TabsList>

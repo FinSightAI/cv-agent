@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { store, type StoredPreferences } from "@/lib/storage";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
+import { Download, Upload, Trash2 } from "lucide-react";
 
 const EMPTY: StoredPreferences = {
   targetRoles: [],
@@ -227,7 +228,91 @@ export default function SettingsPage() {
       <div className="flex justify-end">
         <Button onClick={save}>{t("common.save")}</Button>
       </div>
+
+      {/* Data management */}
+      <DataManagementCard />
     </div>
+  );
+}
+
+function DataManagementCard() {
+  const { t } = useLang();
+
+  function exportData() {
+    const data = {
+      resume: localStorage.getItem("cv-agent:resume:v1"),
+      jobs: localStorage.getItem("cv-agent:jobs:v1"),
+      prefs: localStorage.getItem("cv-agent:prefs:v1"),
+      exportedAt: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `cv-agent-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("גיבוי הורד");
+  }
+
+  function importData(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        if (data.resume) localStorage.setItem("cv-agent:resume:v1", data.resume);
+        if (data.jobs) localStorage.setItem("cv-agent:jobs:v1", data.jobs);
+        if (data.prefs) localStorage.setItem("cv-agent:prefs:v1", data.prefs);
+        toast.success("הנתונים יובאו — רענן את הדף");
+        setTimeout(() => window.location.reload(), 1000);
+      } catch {
+        toast.error("קובץ לא תקין");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  }
+
+  function clearData() {
+    if (!confirm("למחוק את כל הנתונים? פעולה זו אינה הפיכה.")) return;
+    localStorage.removeItem("cv-agent:resume:v1");
+    localStorage.removeItem("cv-agent:jobs:v1");
+    localStorage.removeItem("cv-agent:prefs:v1");
+    toast.success("הנתונים נמחקו");
+    setTimeout(() => window.location.reload(), 800);
+  }
+
+  return (
+    <Card className="glass border-border/40">
+      <CardHeader>
+        <CardTitle className="text-base">ניהול נתונים</CardTitle>
+        <CardDescription>גיבוי, ייבוא, ומחיקה של כל הנתונים המקומיים</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-3">
+        <Button variant="outline" size="sm" onClick={exportData}>
+          <Download className="size-4 me-2" />
+          ייצא גיבוי
+        </Button>
+        <Button variant="outline" size="sm" asChild>
+          <label className="cursor-pointer">
+            <Upload className="size-4 me-2" />
+            ייבא גיבוי
+            <input type="file" accept=".json" className="hidden" onChange={importData} />
+          </label>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-destructive hover:text-destructive border-destructive/30 hover:border-destructive/60"
+          onClick={clearData}
+        >
+          <Trash2 className="size-4 me-2" />
+          מחק הכל
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
 
