@@ -1,8 +1,8 @@
 export const dictionary = {
   he: {
     // Brand & nav
-    "brand.name": "CV Agent",
-    "brand.tagline": "סוכן חכם לחיפוש עבודה",
+    "brand.name": "JobOS",
+    "brand.tagline": "מערכת ההפעלה לחיפוש עבודה",
     "nav.dashboard": "סקירה",
     "nav.cv": "קורות חיים",
     "nav.jobs": "משרות",
@@ -668,8 +668,8 @@ export const dictionary = {
     "debrief.different": "מה היית עושה אחרת",
   },
   en: {
-    "brand.name": "CV Agent",
-    "brand.tagline": "Smart job-hunting copilot",
+    "brand.name": "JobOS",
+    "brand.tagline": "The operating system for your job search",
     "nav.dashboard": "Overview",
     "nav.cv": "Resume",
     "nav.jobs": "Jobs",

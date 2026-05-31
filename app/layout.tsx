@@ -28,12 +28,12 @@ const SITE_URL =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "CV Agent — Smart job-hunting copilot",
-    template: "%s · CV Agent",
+    default: "JobOS — The operating system for your job search",
+    template: "%s · JobOS",
   },
   description:
     "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
-  applicationName: "CV Agent",
+  applicationName: "JobOS",
   authors: [{ name: "Ofir Shamir" }],
   keywords: [
     "job search",
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: SITE_URL,
-    siteName: "CV Agent",
-    title: "CV Agent — Smart job-hunting copilot",
+    siteName: "JobOS",
+    title: "JobOS — The operating system for your job search",
     description:
       "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
     locale: "he_IL",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "CV Agent — Smart job-hunting copilot",
+    title: "JobOS — The operating system for your job search",
     description:
       "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
   },

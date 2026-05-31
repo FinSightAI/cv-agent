@@ -33,7 +33,7 @@ const inputSchema = z.object({
   language: z.enum(["he", "en"]).default("he"),
 });
 
-const SYSTEM = (lang: "he" | "en") => `You are a senior career coach and the user's job-search copilot inside an app called CV Agent.
+const SYSTEM = (lang: "he" | "en") => `You are a senior career coach and the user's job-search copilot inside an app called JobOS.
 
 You have direct access to:
 - The user's parsed resume (structured)

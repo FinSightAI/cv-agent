@@ -56,9 +56,9 @@ export async function GET(req: NextRequest) {
 
   const resend = new Resend(resendKey);
   const { error } = await resend.emails.send({
-    from: "CV Agent <alerts@cv-agent-opal.vercel.app>",
+    from: "JobOS <alerts@cv-agent-opal.vercel.app>",
     to: email,
-    subject: `CV Agent — ${jobs.length} משרות חדשות ${new Date().toLocaleDateString("he-IL")}`,
+    subject: `JobOS — ${jobs.length} משרות חדשות ${new Date().toLocaleDateString("he-IL")}`,
     html: buildEmailHtml(jobs, roles, location),
   });
 
@@ -106,7 +106,7 @@ function buildEmailHtml(
 <body style="margin:0;padding:0;background:#fafafa;font-family:system-ui,sans-serif;direction:rtl">
 <div style="max-width:600px;margin:0 auto;padding:24px 16px">
   <div style="background:linear-gradient(135deg,#6d28d9,#a855f7);border-radius:12px;padding:24px;margin-bottom:20px;color:#fff">
-    <h1 style="margin:0 0 6px;font-size:22px">✨ CV Agent — דיילי דיג'סט</h1>
+    <h1 style="margin:0 0 6px;font-size:22px">✨ JobOS — דיילי דיג'סט</h1>
     <p style="margin:0;opacity:.85;font-size:14px">
       ${jobs.length} משרות חדשות ל: ${roles.join(", ")} · ${location}
     </p>
@@ -117,7 +117,7 @@ function buildEmailHtml(
     </table>
   </div>
   <p style="text-align:center;color:#999;font-size:12px;margin-top:20px">
-    <a href="https://cv-agent-opal.vercel.app/jobs" style="color:#6d28d9">פתח את CV Agent</a> ·
+    <a href="https://cv-agent-opal.vercel.app/jobs" style="color:#6d28d9">פתח את JobOS</a> ·
     <a href="https://cv-agent-opal.vercel.app/settings" style="color:#999;text-decoration:none">הגדרות</a>
   </p>
 </div>

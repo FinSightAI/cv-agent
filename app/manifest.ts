@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "CV Agent",
-    short_name: "CV Agent",
-    description: "סוכן AI לחיפוש עבודה",
+    name: "JobOS",
+    short_name: "JobOS",
+    description: "מערכת ההפעלה לחיפוש עבודה",
     start_url: "/",
     display: "standalone",
     background_color: "#09090b",
