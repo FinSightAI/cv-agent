@@ -6,6 +6,12 @@
 
 ---
 
+## About
+
+Jobos is an AI-powered job search operating system that guides candidates from first application to signed offer. It combines a structured resume builder, intelligent job-fit scoring, one-click CV tailoring, real-time cover letter generation, interview simulation, and salary negotiation coaching — all in a single Next.js app that works entirely in the browser without requiring an account. Optional integrations with Neon Postgres, Clerk auth, Gmail, and a daily email digest via Resend are available for teams that need cloud persistence and automation, while a free Google AI Studio key is the only hard dependency for the AI features.
+
+---
+
 ## What it does
 
 Jobos manages the entire job search pipeline — from discovering jobs to negotiating offers — with AI at every step.
