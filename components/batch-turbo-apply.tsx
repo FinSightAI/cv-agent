@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -130,6 +130,16 @@ export function BatchTurboApply({
   const [progress, setProgress] = useState<JobProgress[]>([]);
   const [bundleUrl, setBundleUrl] = useState<string | null>(null);
   const [urlsToOpen, setUrlsToOpen] = useState<string[]>([]);
+
+  // Reset to idle whenever the dialog is opened fresh
+  useEffect(() => {
+    if (open) {
+      setState("idle");
+      setProgress([]);
+      setBundleUrl(null);
+      setUrlsToOpen([]);
+    }
+  }, [open]);
 
   const updateJob = useCallback((id: string, update: Partial<JobProgress>) => {
     setProgress((prev) =>
