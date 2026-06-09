@@ -7,7 +7,7 @@ import {
   Briefcase,
   Plus,
   KanbanSquare,
-  Sparkles,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/components/lang-provider";
@@ -21,9 +21,9 @@ const ITEMS: {
 }[] = [
   { href: "/", key: "nav.dashboard", icon: LayoutDashboard, exact: true },
   { href: "/jobs", key: "nav.jobs", icon: Briefcase },
-  { href: "/jobs/new", key: "jobs.add", icon: Plus },
+  { href: "/launch", key: "nav.launch", icon: Rocket },
   { href: "/applications", key: "nav.applications", icon: KanbanSquare },
-  { href: "/agent", key: "nav.agent", icon: Sparkles },
+  { href: "/jobs/new", key: "jobs.add", icon: Plus },
 ];
 
 export function MobileNav() {

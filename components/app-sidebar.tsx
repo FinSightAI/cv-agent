@@ -17,6 +17,7 @@ import {
   Search,
   BarChart3,
   Scale,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { href: "/", key: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/launch", key: "nav.launch", icon: Rocket },
   { href: "/cv", key: "nav.cv", icon: FileText },
   { href: "/jobs", key: "nav.jobs", icon: Briefcase },
   { href: "/applications", key: "nav.applications", icon: KanbanSquare },
