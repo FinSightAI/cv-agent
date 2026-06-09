@@ -65,6 +65,10 @@ export function resumeToMarkdown(r: ParsedResume, lang: "he" | "en"): string {
   return out.join("\n");
 }
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 export function coverLetterToHtml(
   text: string,
   lang: "he" | "en",
@@ -72,6 +76,8 @@ export function coverLetterToHtml(
   company: string,
 ): string {
   const dir = lang === "he" ? "rtl" : "ltr";
+  const safeTitle = escapeHtml(title);
+  const safeCompany = escapeHtml(company);
   const escaped = text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -83,7 +89,7 @@ export function coverLetterToHtml(
 <html lang="${lang}" dir="${dir}">
 <head>
 <meta charset="utf-8">
-<title>${title} — ${company}</title>
+<title>${safeTitle} — ${safeCompany}</title>
 <style>
   body { font-family: Arial, sans-serif; max-width: 680px; margin: 48px auto; color: #1a1a1a; line-height: 1.7; font-size: 15px; direction: ${dir}; }
   p { margin: 0 0 0.75em; }
@@ -92,7 +98,7 @@ export function coverLetterToHtml(
 </style>
 </head>
 <body>
-<h2>${title} · ${company}</h2>
+<h2>${safeTitle} · ${safeCompany}</h2>
 ${escaped}
 </body>
 </html>`;

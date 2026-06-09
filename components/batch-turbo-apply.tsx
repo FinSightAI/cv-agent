@@ -131,13 +131,16 @@ export function BatchTurboApply({
   const [bundleUrl, setBundleUrl] = useState<string | null>(null);
   const [urlsToOpen, setUrlsToOpen] = useState<string[]>([]);
 
-  // Reset to idle whenever the dialog is opened fresh
+  // Reset to idle when dialog opens — only if no batch is running
   useEffect(() => {
     if (open) {
-      setState("idle");
-      setProgress([]);
-      setBundleUrl(null);
-      setUrlsToOpen([]);
+      setState((prev) => {
+        if (prev === "running" || prev === "bundling") return prev;
+        setProgress([]);
+        setBundleUrl(null);
+        setUrlsToOpen([]);
+        return "idle";
+      });
     }
   }, [open]);
 
@@ -187,8 +190,9 @@ export function BatchTurboApply({
     while (queue.length > 0 || inFlight.length > 0) {
       while (inFlight.length < CONCURRENCY && queue.length > 0) {
         const job = queue.shift()!;
-        const p = runOne(job).then(() => {
-          inFlight.splice(inFlight.indexOf(p), 1);
+        const p = runOne(job).finally(() => {
+          const idx = inFlight.indexOf(p);
+          if (idx >= 0) inFlight.splice(idx, 1);
         });
         inFlight.push(p);
       }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -35,14 +35,19 @@ export function BatchFollowUp() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [generating, setGenerating] = useState(false);
   const [emails, setEmails] = useState<GeneratedEmail[]>([]);
+  const [staleJobs, setStaleJobs] = useState<StoredJob[]>([]);
 
-  const staleJobs = store
-    .getJobs()
-    .filter((j) => {
-      if (!["applied", "screen"].includes(j.status)) return false;
-      return daysSince(j) >= 7;
-    })
-    .sort((a, b) => daysSince(b) - daysSince(a));
+  useEffect(() => {
+    setStaleJobs(
+      store
+        .getJobs()
+        .filter((j) => {
+          if (!["applied", "screen"].includes(j.status)) return false;
+          return daysSince(j) >= 7;
+        })
+        .sort((a, b) => daysSince(b) - daysSince(a)),
+    );
+  }, []);
 
   function toggle(id: string) {
     setSelected((prev) => {

@@ -9,8 +9,15 @@ import { resumeToMarkdown } from "@/lib/cv-export";
 import { useLang } from "@/components/lang-provider";
 
 function extractEmail(text: string): string | null {
-  const m = text.match(/[\w.+\-]+@[\w\-]+\.[\w.]+/);
-  return m ? m[0] : null;
+  // Prefer mailto: links first (most reliable apply-intent signal)
+  const mailto = text.match(/mailto:([\w.+\-]+@[\w\-]+\.[\w.]+)/i);
+  if (mailto) return mailto[1];
+  // Fall back to email preceded by apply-context keywords
+  const contextual = text.match(
+    /(?:שלח(?:ו)?|apply|send|cv|resume|mail)[^\n]{0,60}?([\w.+\-]+@[\w\-]+\.[\w.]+)/i,
+  );
+  if (contextual) return contextual[1];
+  return null;
 }
 
 export function EmailApply({ job }: { job: StoredJob }) {
@@ -31,7 +38,7 @@ export function EmailApply({ job }: { job: StoredJob }) {
         applicantName: resume?.parsed.fullName,
         coverLetter: job.coverLetter,
         tailoredCvMd: job.tailoredResume
-          ? resumeToMarkdown(job.tailoredResume.resume, lang)
+          ? resumeToMarkdown(job.tailoredResume.resume, lang as "he" | "en")
           : undefined,
         lang,
       };
