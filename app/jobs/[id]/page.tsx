@@ -52,6 +52,7 @@ import { SalaryNegotiation } from "@/components/salary-negotiation";
 import { RejectionAnalyzer } from "@/components/rejection-analyzer";
 import { InterviewDebrief } from "@/components/interview-debrief";
 import { TurboApply } from "@/components/turbo-apply";
+import { EmailApply } from "@/components/email-apply";
 import { CompanyResearch } from "@/components/company-research";
 import { Plan306090 } from "@/components/plan-30-60-90";
 import { JdDecoder } from "@/components/jd-decoder";
@@ -67,7 +68,7 @@ import type {
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
 import { PrintableResume } from "@/components/printable-resume";
-import { downloadMarkdown, resumeToMarkdown } from "@/lib/cv-export";
+import { downloadMarkdown, resumeToMarkdown, coverLetterToHtml } from "@/lib/cv-export";
 import { AILoadingSkeleton } from "@/components/ai-loading-skeleton";
 import { aiFetchJson, formatDate } from "@/lib/utils";
 
@@ -139,7 +140,8 @@ export default function JobDetailPage() {
         job.notes ? `\nהערות:\n${job.notes}` : "",
       ].filter(Boolean).join("\n");
       zip.file("job-info.txt", jobInfo);
-      if (job.coverLetter) zip.file("cover-letter.txt", job.coverLetter);
+      if (job.coverLetter)
+        zip.file("cover-letter.html", coverLetterToHtml(job.coverLetter, lang, job.parsed.title, job.parsed.company));
       if (job.tailoredResume) {
         const md = resumeToMarkdown(job.tailoredResume.resume, lang);
         zip.file("tailored-cv.md", md);
@@ -367,6 +369,7 @@ export default function JobDetailPage() {
         <ReadinessScore job={job} />
         <div className="flex flex-col justify-end gap-2">
           <TurboApply job={job} />
+          <EmailApply job={job} />
         </div>
       </div>
 
