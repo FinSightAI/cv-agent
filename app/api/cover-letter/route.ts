@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   const rl = checkRateLimit(req, "cover-letter", HEAVY_AI_LIMIT);
   if (!rl.ok) return rateLimitStreamResponse(rl.retryAfter);
 
-  const body = await req.json();
+  const body = await req.json().catch(() => null);
   const parsed = inputSchema.safeParse(body);
   if (!parsed.success) {
     return new Response(JSON.stringify({ error: "Invalid input" }), {

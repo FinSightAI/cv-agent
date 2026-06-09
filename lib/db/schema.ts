@@ -36,6 +36,7 @@ export const applicationSource = pgEnum("application_source", [
   "workday",
   "indeed",
   "alljobs",
+  "drushim",
   "company_page",
   "other",
 ]);

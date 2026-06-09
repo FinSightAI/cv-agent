@@ -66,7 +66,7 @@ export function AppSidebar() {
       jobs.filter((j) => {
         if (!["applied", "screen"].includes(j.status)) return false;
         const ref = j.appliedAt ?? j.createdAt;
-        return (now - new Date(ref).getTime()) / 86_400_000 > 7;
+        return (now - new Date(ref).getTime()) / 86_400_000 >= 7;
       }).length,
     );
   }, []);

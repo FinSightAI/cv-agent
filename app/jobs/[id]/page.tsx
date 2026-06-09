@@ -159,8 +159,10 @@ export default function JobDetailPage() {
     setNotes(val);
     if (notesTimer.current) clearTimeout(notesTimer.current);
     notesTimer.current = setTimeout(() => {
-      if (!job) return;
-      const updated = { ...job, notes: val };
+      // Read fresh from store to avoid stale closure reverting concurrent updates
+      const current = store.getJob(id);
+      if (!current) return;
+      const updated = { ...current, notes: val };
       store.saveJob(updated);
       setJob(updated);
       toast.success(t("job.notes.saved"), { duration: 1500 });

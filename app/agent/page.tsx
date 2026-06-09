@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import {
@@ -31,35 +31,49 @@ export default function AgentPage() {
   const [input, setInput] = useState("");
   const scrollerRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage, status, setMessages } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/agent",
-      prepareSendMessagesRequest: ({ messages }) => ({
-        body: {
-          messages,
-          resume,
-          jobs: jobs.map((j) => ({
-            id: j.id,
-            title: j.parsed.title,
-            company: j.parsed.company,
-            status: j.status,
-            matchScore: j.match?.score ?? null,
-            recommendation: j.match?.recommendation ?? null,
-            parsed: {
-              location: j.parsed.location,
-              remote: j.parsed.remote,
-              seniority: j.parsed.seniority,
-              keywords: j.parsed.keywords,
-            },
-            createdAt: j.createdAt,
-            appliedAt: j.appliedAt,
-          })),
-          preferences: prefs,
-          language: lang,
-        },
+  // Refs keep the latest state accessible inside the stable transport closure
+  const resumeRef = useRef<ParsedResume | null>(null);
+  const jobsRef = useRef<StoredJob[]>([]);
+  const prefsRef = useRef<unknown>(null);
+  const langRef = useRef(lang);
+  resumeRef.current = resume;
+  jobsRef.current = jobs;
+  prefsRef.current = prefs;
+  langRef.current = lang;
+
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/agent",
+        prepareSendMessagesRequest: ({ messages }) => ({
+          body: {
+            messages,
+            resume: resumeRef.current,
+            jobs: jobsRef.current.map((j) => ({
+              id: j.id,
+              title: j.parsed.title,
+              company: j.parsed.company,
+              status: j.status,
+              matchScore: j.match?.score ?? null,
+              recommendation: j.match?.recommendation ?? null,
+              parsed: {
+                location: j.parsed.location,
+                remote: j.parsed.remote,
+                seniority: j.parsed.seniority,
+                keywords: j.parsed.keywords,
+              },
+              createdAt: j.createdAt,
+              appliedAt: j.appliedAt,
+            })),
+            preferences: prefsRef.current,
+            language: langRef.current,
+          },
+        }),
       }),
-    }),
-  });
+    [],
+  );
+
+  const { messages, sendMessage, status, setMessages } = useChat({ transport });
 
   useEffect(() => {
     const r = store.getResume();
