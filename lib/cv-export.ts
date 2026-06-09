@@ -65,6 +65,39 @@ export function resumeToMarkdown(r: ParsedResume, lang: "he" | "en"): string {
   return out.join("\n");
 }
 
+export function coverLetterToHtml(
+  text: string,
+  lang: "he" | "en",
+  title: string,
+  company: string,
+): string {
+  const dir = lang === "he" ? "rtl" : "ltr";
+  const escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .split("\n")
+    .map((line) => `<p>${line || "<br>"}</p>`)
+    .join("\n");
+  return `<!DOCTYPE html>
+<html lang="${lang}" dir="${dir}">
+<head>
+<meta charset="utf-8">
+<title>${title} — ${company}</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 680px; margin: 48px auto; color: #1a1a1a; line-height: 1.7; font-size: 15px; direction: ${dir}; }
+  p { margin: 0 0 0.75em; }
+  h2 { font-size: 1rem; color: #555; font-weight: normal; margin-bottom: 2em; }
+  @media print { body { margin: 24px; } }
+</style>
+</head>
+<body>
+<h2>${title} · ${company}</h2>
+${escaped}
+</body>
+</html>`;
+}
+
 export function downloadMarkdown(filename: string, content: string) {
   const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
   const url = URL.createObjectURL(blob);

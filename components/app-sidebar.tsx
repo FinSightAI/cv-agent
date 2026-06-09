@@ -55,10 +55,12 @@ export function AppSidebar() {
   const sideClass = dir === "rtl" ? "border-l" : "border-r";
   const [interviewCount, setInterviewCount] = useState(0);
   const [staleCount, setStaleCount] = useState(0);
+  const [readyCount, setReadyCount] = useState(0);
 
   useEffect(() => {
     const jobs = store.getJobs();
     setInterviewCount(jobs.filter((j) => j.status === "interview").length);
+    setReadyCount(jobs.filter((j) => j.status === "ready").length);
     const now = Date.now();
     setStaleCount(
       jobs.filter((j) => {
@@ -72,6 +74,7 @@ export function AppSidebar() {
   const badges: Record<string, number> = {};
   if (interviewCount > 0) badges["/applications"] = interviewCount;
   if (staleCount > 0) badges["/jobs"] = (badges["/jobs"] ?? 0) + staleCount;
+  if (readyCount > 0) badges["/launch"] = readyCount;
 
   return (
     <aside

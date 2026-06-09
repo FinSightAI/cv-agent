@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Rocket,
   Sparkles,
@@ -15,10 +16,12 @@ import {
   Square,
   Zap,
   AlertCircle,
+  Mail,
 } from "lucide-react";
 import { store, type StoredJob } from "@/lib/storage";
 import { useLang } from "@/components/lang-provider";
 import { BatchTurboApply } from "@/components/batch-turbo-apply";
+import { BatchFollowUp } from "@/components/batch-followup";
 
 const APPLICABLE_STATUSES: StoredJob["status"][] = [
   "saved",
@@ -135,106 +138,127 @@ export default function LaunchPage() {
         </div>
       )}
 
-      {/* No jobs */}
-      {jobs.length === 0 && (
-        <Card className="glass border-dashed">
-          <CardContent className="py-16 flex flex-col items-center gap-4 text-center">
-            <div className="size-16 rounded-2xl bg-primary/10 grid place-items-center">
-              <Rocket className="size-8 text-primary/50" />
-            </div>
-            <div>
-              <p className="font-medium">{t("launch.noJobs")}</p>
-              <p className="text-sm text-muted-foreground">{t("launch.noJobs.desc")}</p>
-            </div>
-            <Button asChild variant="outline">
-              <Link href="/jobs">
-                <Briefcase className="size-4 me-2" />
-                {t("nav.jobs")}
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      <Tabs defaultValue="apply" className="space-y-4">
+        <TabsList className="w-full justify-start h-auto p-1 gap-0.5">
+          <TabsTrigger value="apply" className="text-xs gap-1.5">
+            <Rocket className="size-3" />
+            {dir === "rtl" ? "Turbo Apply" : "Turbo Apply"}
+          </TabsTrigger>
+          <TabsTrigger value="followup" className="text-xs gap-1.5">
+            <Mail className="size-3" />
+            {t("followBatch.tab")}
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Controls */}
-      {jobs.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant={filterReady ? "default" : "outline"}
-            size="sm"
-            className="h-8 text-xs"
-            onClick={() => setFilterReady((v) => !v)}
-          >
-            <Zap className="size-3 me-1" />
-            {t("launch.filterReady")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs"
-            onClick={smartSelect}
-            disabled={smartCount === 0}
-          >
-            <Sparkles className="size-3 me-1" />
-            {t("launch.smartSelect")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs"
-            onClick={selectAll}
-          >
-            <CheckSquare className="size-3 me-1" />
-            {t("launch.selectAll")}
-          </Button>
-          {selected.size > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 text-xs"
-              onClick={clearAll}
-            >
-              <Square className="size-3 me-1" />
-              {t("launch.clearAll")}
-            </Button>
+        {/* ── Tab 1: Batch Apply ── */}
+        <TabsContent value="apply" className="space-y-4 mt-0">
+          {/* No jobs */}
+          {jobs.length === 0 && (
+            <Card className="glass border-dashed">
+              <CardContent className="py-16 flex flex-col items-center gap-4 text-center">
+                <div className="size-16 rounded-2xl bg-primary/10 grid place-items-center">
+                  <Rocket className="size-8 text-primary/50" />
+                </div>
+                <div>
+                  <p className="font-medium">{t("launch.noJobs")}</p>
+                  <p className="text-sm text-muted-foreground">{t("launch.noJobs.desc")}</p>
+                </div>
+                <Button asChild variant="outline">
+                  <Link href="/jobs">
+                    <Briefcase className="size-4 me-2" />
+                    {t("nav.jobs")}
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
           )}
-          <span className="ms-auto text-xs text-muted-foreground">
-            {selected.size > 0 &&
-              t("launch.selected").replace("{n}", String(selected.size))}
-          </span>
-        </div>
-      )}
 
-      {/* Job list */}
-      {displayed.length > 0 && (
-        <div className="space-y-2">
-          {displayed.map((j) => (
-            <JobRow
-              key={j.id}
-              job={j}
-              checked={selected.has(j.id)}
-              onToggle={() => toggleJob(j.id)}
-            />
-          ))}
-        </div>
-      )}
+          {/* Controls */}
+          {jobs.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                variant={filterReady ? "default" : "outline"}
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => setFilterReady((v) => !v)}
+              >
+                <Zap className="size-3 me-1" />
+                {t("launch.filterReady")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs"
+                onClick={smartSelect}
+                disabled={smartCount === 0}
+              >
+                <Sparkles className="size-3 me-1" />
+                {t("launch.smartSelect")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs"
+                onClick={selectAll}
+              >
+                <CheckSquare className="size-3 me-1" />
+                {t("launch.selectAll")}
+              </Button>
+              {selected.size > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs"
+                  onClick={clearAll}
+                >
+                  <Square className="size-3 me-1" />
+                  {t("launch.clearAll")}
+                </Button>
+              )}
+              <span className="ms-auto text-xs text-muted-foreground">
+                {selected.size > 0 &&
+                  t("launch.selected").replace("{n}", String(selected.size))}
+              </span>
+            </div>
+          )}
 
-      {/* Launch button */}
-      {selected.size > 0 && (
-        <div className="sticky bottom-4 md:bottom-6">
-          <Button
-            size="lg"
-            disabled={!hasResume}
-            className="w-full shadow-2xl shadow-primary/30 bg-gradient-to-r from-primary to-fuchsia-500 hover:opacity-90 transition-opacity text-lg font-bold py-6"
-            onClick={() => setBatchOpen(true)}
-          >
-            <Rocket className="size-5 me-2" />
-            {selected.size === 1
-              ? t("launch.launchOne")
-              : t("launch.launch").replace("{n}", String(selected.size))}
-          </Button>
-        </div>
-      )}
+          {/* Job list */}
+          {displayed.length > 0 && (
+            <div className="space-y-2">
+              {displayed.map((j) => (
+                <JobRow
+                  key={j.id}
+                  job={j}
+                  checked={selected.has(j.id)}
+                  onToggle={() => toggleJob(j.id)}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Launch button */}
+          {selected.size > 0 && (
+            <div className="sticky bottom-4 md:bottom-6">
+              <Button
+                size="lg"
+                disabled={!hasResume}
+                className="w-full shadow-2xl shadow-primary/30 bg-gradient-to-r from-primary to-fuchsia-500 hover:opacity-90 transition-opacity text-lg font-bold py-6"
+                onClick={() => setBatchOpen(true)}
+              >
+                <Rocket className="size-5 me-2" />
+                {selected.size === 1
+                  ? t("launch.launchOne")
+                  : t("launch.launch").replace("{n}", String(selected.size))}
+              </Button>
+            </div>
+          )}
+        </TabsContent>
+
+        {/* ── Tab 2: Batch Follow-up ── */}
+        <TabsContent value="followup" className="mt-0">
+          <BatchFollowUp />
+        </TabsContent>
+      </Tabs>
 
       {/* Batch modal */}
       <BatchTurboApply
@@ -242,7 +266,6 @@ export default function LaunchPage() {
         open={batchOpen}
         onClose={() => {
           setBatchOpen(false);
-          // Refresh job list after applying
           const all = store.getJobs();
           setJobs(all.filter((j) => APPLICABLE_STATUSES.includes(j.status)));
           setSelected(new Set());

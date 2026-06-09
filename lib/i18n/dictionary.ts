@@ -743,6 +743,29 @@ export const dictionary = {
     "jd.ideal": "המועמד האידיאלי",
     "jd.positives": "הדברים הטובים",
 
+    // Email Apply
+    "emailApply.button": "שלח CV במייל",
+    "emailApply.sending": "שולח...",
+    "emailApply.sent": "נשלח!",
+    "emailApply.failed": "שליחה נכשלה",
+    "emailApply.noKey": "הגדר RESEND_API_KEY כדי לשלוח מיילים",
+    "emailApply.subject": "מועמדות ל",
+    "emailApply.copied": "הועתק ללוח",
+    "emailApply.copyEmail": "העתק כתובת",
+
+    // Follow-up batch
+    "followBatch.tab": "follow-up",
+    "followBatch.title": "follow-up אוטומטי",
+    "followBatch.subtitle": "משרות שהוגשו לפני 7+ ימים ללא תגובה",
+    "followBatch.empty": "אין משרות ממתינות ל-follow-up",
+    "followBatch.generate": "צור follow-ups ({n})",
+    "followBatch.generating": "יוצר מיילים...",
+    "followBatch.copy": "העתק",
+    "followBatch.copied": "הועתק",
+    "followBatch.days": "ימים",
+    "followBatch.subject": "נושא",
+    "followBatch.body": "גוף",
+
     // Launch Pad
     "nav.launch": "🚀 לאונץ' פד",
     "launch.title": "לאונץ' פד",
@@ -1503,6 +1526,29 @@ export const dictionary = {
     "jd.context": "Hidden context",
     "jd.ideal": "The ideal candidate",
     "jd.positives": "The good stuff",
+
+    // Email Apply
+    "emailApply.button": "Send CV by email",
+    "emailApply.sending": "Sending...",
+    "emailApply.sent": "Sent!",
+    "emailApply.failed": "Send failed",
+    "emailApply.noKey": "Set RESEND_API_KEY to send emails",
+    "emailApply.subject": "Application for",
+    "emailApply.copied": "Copied to clipboard",
+    "emailApply.copyEmail": "Copy address",
+
+    // Follow-up batch
+    "followBatch.tab": "Follow-up",
+    "followBatch.title": "Auto Follow-up",
+    "followBatch.subtitle": "Jobs applied 7+ days ago with no response",
+    "followBatch.empty": "No jobs waiting for follow-up",
+    "followBatch.generate": "Generate follow-ups ({n})",
+    "followBatch.generating": "Generating emails...",
+    "followBatch.copy": "Copy",
+    "followBatch.copied": "Copied",
+    "followBatch.days": "days",
+    "followBatch.subject": "Subject",
+    "followBatch.body": "Body",
 
     // Launch Pad
     "nav.launch": "🚀 Launch Pad",

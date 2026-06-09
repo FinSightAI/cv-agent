@@ -22,7 +22,7 @@ import {
 import { store, type StoredJob } from "@/lib/storage";
 import { aiFetchJson } from "@/lib/utils";
 import type { TailoredResume } from "@/lib/ai/schemas";
-import { resumeToMarkdown } from "@/lib/cv-export";
+import { resumeToMarkdown, coverLetterToHtml } from "@/lib/cv-export";
 import { useLang } from "@/components/lang-provider";
 
 type JobStepState = "pending" | "running" | "done" | "skip" | "failed";
@@ -218,7 +218,12 @@ export function BatchTurboApply({
           .join("\n");
 
         dir.file("job-info.txt", info);
-        if (coverLetter) dir.file("cover-letter.txt", coverLetter);
+        if (coverLetter) {
+          dir.file(
+            "cover-letter.html",
+            coverLetterToHtml(coverLetter, lang as "he" | "en", job.parsed.title, job.parsed.company),
+          );
+        }
         if (tailoredMd) dir.file("tailored-cv.md", tailoredMd);
       }
 
