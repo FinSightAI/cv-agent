@@ -12,5 +12,5 @@ import { google } from "@ai-sdk/google";
 // install the matching @ai-sdk/* package — call sites stay the same.
 
 export const MODEL_FAST = google("gemini-2.5-flash");
-export const MODEL_REASONING = google("gemini-2.5-flash");
+export const MODEL_REASONING = google("gemini-2.5-pro");
 export const MODEL_HEAVY = google("gemini-2.5-pro");

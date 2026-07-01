@@ -127,13 +127,13 @@ export async function fetchWorkdayJobDetail(
   const data = (await res.json()) as {
     jobPostingInfo?: {
       title: string;
-      jobDescription: string;
+      jobDescription?: string | null;
       location?: string;
     };
   };
   const info = data.jobPostingInfo;
   if (!info) throw new Error("Workday detail malformed");
-  return [info.title, info.location, "", stripHtml(info.jobDescription)]
+  return [info.title, info.location, "", info.jobDescription ? stripHtml(info.jobDescription) : ""]
     .filter(Boolean)
     .join("\n");
 }

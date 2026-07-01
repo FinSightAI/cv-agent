@@ -17,6 +17,7 @@ import {
   Search,
   BarChart3,
   Scale,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { href: "/", key: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/launch", key: "nav.launch", icon: Rocket },
   { href: "/cv", key: "nav.cv", icon: FileText },
   { href: "/jobs", key: "nav.jobs", icon: Briefcase },
   { href: "/applications", key: "nav.applications", icon: KanbanSquare },
@@ -53,16 +55,18 @@ export function AppSidebar() {
   const sideClass = dir === "rtl" ? "border-l" : "border-r";
   const [interviewCount, setInterviewCount] = useState(0);
   const [staleCount, setStaleCount] = useState(0);
+  const [readyCount, setReadyCount] = useState(0);
 
   useEffect(() => {
     const jobs = store.getJobs();
     setInterviewCount(jobs.filter((j) => j.status === "interview").length);
+    setReadyCount(jobs.filter((j) => j.status === "ready").length);
     const now = Date.now();
     setStaleCount(
       jobs.filter((j) => {
         if (!["applied", "screen"].includes(j.status)) return false;
         const ref = j.appliedAt ?? j.createdAt;
-        return (now - new Date(ref).getTime()) / 86_400_000 > 7;
+        return (now - new Date(ref).getTime()) / 86_400_000 >= 7;
       }).length,
     );
   }, []);
@@ -70,6 +74,7 @@ export function AppSidebar() {
   const badges: Record<string, number> = {};
   if (interviewCount > 0) badges["/applications"] = interviewCount;
   if (staleCount > 0) badges["/jobs"] = (badges["/jobs"] ?? 0) + staleCount;
+  if (readyCount > 0) badges["/launch"] = readyCount;
 
   return (
     <aside
