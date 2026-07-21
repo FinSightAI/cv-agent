@@ -6,11 +6,11 @@ import { google } from "@ai-sdk/google";
 //
 // Free tier (as of 2026):
 // - Gemini 2.5 Flash: ~10 RPM, ~250 RPD, generous tokens
-// - Gemini 2.5 Pro: lower limits but smarter
+// - Gemini 2.5 Pro: free tier quota is 0 requests for this key type — do not use
 //
 // If you ever switch to paid Claude/OpenAI, swap these constants and
 // install the matching @ai-sdk/* package — call sites stay the same.
 
 export const MODEL_FAST = google("gemini-2.5-flash");
-export const MODEL_REASONING = google("gemini-2.5-pro");
-export const MODEL_HEAVY = google("gemini-2.5-pro");
+export const MODEL_REASONING = google("gemini-2.5-flash");
+export const MODEL_HEAVY = google("gemini-2.5-flash");
