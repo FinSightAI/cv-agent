@@ -69,6 +69,7 @@ import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
 import { PrintableResume } from "@/components/printable-resume";
 import { downloadMarkdown, resumeToMarkdown, coverLetterToHtml } from "@/lib/cv-export";
+import { downloadDocx, resumeToDocxBlob } from "@/lib/cv-export-docx";
 import { AILoadingSkeleton } from "@/components/ai-loading-skeleton";
 import { aiFetchJson, formatDate } from "@/lib/utils";
 
@@ -725,6 +726,21 @@ function TailorTab({
               >
                 <Download className="size-4 me-1" />
                 {t("tailor.downloadMd")}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={async () => {
+                  try {
+                    const blob = await resumeToDocxBlob(tailored.resume, lang);
+                    downloadDocx(`${filename}.docx`, blob);
+                  } catch {
+                    toast.error(t("export.docxFailed"));
+                  }
+                }}
+              >
+                <Download className="size-4 me-1" />
+                {t("tailor.downloadWord")}
               </Button>
             </div>
           </div>
