@@ -18,8 +18,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Upload, FileText, Loader2, Sparkles, Pencil, X, Check, Plus } from "lucide-react";
+import { Upload, FileText, Loader2, Sparkles, Pencil, X, Check, Plus, Download } from "lucide-react";
 import type { ParsedResume } from "@/lib/ai/schemas";
+import { downloadDocx, resumeToDocxBlob } from "@/lib/cv-export-docx";
 import { useLang } from "@/components/lang-provider";
 import { LinkedInOptimizer } from "@/components/linkedin-optimizer";
 
@@ -182,7 +183,7 @@ function ResumeView({
   onReset: () => void;
   onSave: (updated: ParsedResume) => void;
 }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<ParsedResume>(parsed);
   const score = cvCompleteness(parsed);
@@ -234,6 +235,21 @@ function ResumeView({
               <Button size="sm" variant="outline" onClick={startEdit}>
                 <Pencil className="size-4 me-1.5" />
                 {t("cv.edit")}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={async () => {
+                  try {
+                    const blob = await resumeToDocxBlob(parsed, lang);
+                    downloadDocx(`${parsed.fullName || "resume"}.docx`, blob);
+                  } catch {
+                    toast.error(t("export.docxFailed"));
+                  }
+                }}
+              >
+                <Download className="size-4 me-1.5" />
+                {t("cv.downloadWord")}
               </Button>
               <Button variant="outline" size="sm" onClick={onReset}>
                 {t("cv.uploadAnother")}
