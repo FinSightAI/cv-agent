@@ -186,3 +186,80 @@ export const interviewPrepSchema = z.object({
 
 export type InterviewQuestion = z.infer<typeof interviewQuestionSchema>;
 export type InterviewPrep = z.infer<typeof interviewPrepSchema>;
+
+export const linkedInProfileInputSchema = z.object({
+  headline: z.string(),
+  openToWork: z.enum(["off", "recruiters", "all"]),
+  location: z.string(),
+  connectionsCount: z.string(),
+  about: z.string(),
+  experience: z.array(
+    z.object({
+      company: z.string(),
+      role: z.string(),
+      description: z.string(),
+    }),
+  ),
+  education: z.string(),
+  certifications: z.string(),
+  skills: z.array(z.string()),
+  recommendations: z.string(),
+  projects: z.string(),
+});
+export type LinkedInProfileInput = z.infer<typeof linkedInProfileInputSchema>;
+
+export const linkedInAnalyticsInputSchema = z.object({
+  ssiTotal: z.number(),
+  ssiBrand: z.number(),
+  ssiFindPeople: z.number(),
+  ssiEngage: z.number(),
+  ssiRelationships: z.number(),
+  ssiIndustryAvg: z.number().nullable(),
+  ssiNetworkAvg: z.number().nullable(),
+  searchAppearances7d: z.number(),
+  profileViews7d: z.number(),
+  postImpressions7d: z.number(),
+});
+export type LinkedInAnalyticsInput = z.infer<typeof linkedInAnalyticsInputSchema>;
+
+export const linkedInUsagePatternInputSchema = z.object({
+  activityFrequency: z.enum(["daily", "weekly", "rarely", "never"]),
+  postsOrEngages: z.boolean(),
+  receivedRecruiterMessages: z.enum(["yes", "no", "unsure"]),
+  sendsConnectionRequests: z.enum(["often", "sometimes", "never"]),
+});
+export type LinkedInUsagePatternInput = z.infer<typeof linkedInUsagePatternInputSchema>;
+
+export const linkedInDiagnosisResultSchema = z.object({
+  axisAssessment: z.array(
+    z.object({
+      axis: z.enum([
+        "searchAppearance",
+        "initialScreening",
+        "keywordMatch",
+        "activitySignals",
+        "visibilitySettings",
+      ]),
+      level: z.enum(["low", "medium", "high"]),
+      explanation: z.string(),
+    }),
+  ),
+  gaps: z.array(z.string()),
+  recommendations: z.array(
+    z.object({
+      priority: z.number(),
+      title: z.string(),
+      why: z.string(),
+      readyToPasteText: z.string().optional(),
+    }),
+  ),
+  conflicts: z.array(
+    z.object({
+      field: z.string(),
+      resumeSays: z.string(),
+      profileSays: z.string(),
+    }),
+  ),
+  bottomLine: z.string(),
+});
+export type LinkedInDiagnosisResult = z.infer<typeof linkedInDiagnosisResultSchema>;
