@@ -712,19 +712,7 @@ export const dictionary = {
     "rejection.type.personalized": "אישי",
     "rejection.type.ambiguous": "לא ברור",
 
-    // LinkedIn optimizer
-    "linkedin.title": "אופטימייזר LinkedIn",
-    "linkedin.desc": "כתיבה מחדש של הפרופיל למקסימום חשיפה לרקרוטרים",
-    "linkedin.run": "אופטימייז פרופיל",
-    "linkedin.running": "מייצר...",
-    "linkedin.headline": "כותרת",
-    "linkedin.about": "אודות",
-    "linkedin.experience": "ניסיון",
-    "linkedin.skills": "כישורים לבליטה",
-    "linkedin.tips": "טיפים",
-    "linkedin.strength": "חוזק הפרופיל",
-    "linkedin.copyAll": "העתק הכל",
-    // LinkedIn diagnosis (replaces LinkedIn optimizer — old block above removed in a later task)
+    // LinkedIn diagnosis
     "linkedin.diag.title": "אבחון פרופיל LinkedIn",
     "linkedin.diag.desc": "אבחון מבוסס-נתונים אמיתיים של הפרופיל הקיים שלך מול מגייסות",
     "linkedin.diag.language": "שפת פלט:",
@@ -1571,19 +1559,7 @@ export const dictionary = {
     "rejection.type.personalized": "Personalized",
     "rejection.type.ambiguous": "Ambiguous",
 
-    // LinkedIn optimizer
-    "linkedin.title": "LinkedIn Optimizer",
-    "linkedin.desc": "Rewrite your profile for maximum recruiter discoverability",
-    "linkedin.run": "Optimize profile",
-    "linkedin.running": "Generating...",
-    "linkedin.headline": "Headline",
-    "linkedin.about": "About",
-    "linkedin.experience": "Experience",
-    "linkedin.skills": "Skills to highlight",
-    "linkedin.tips": "Tips",
-    "linkedin.strength": "Profile strength",
-    "linkedin.copyAll": "Copy all",
-    // LinkedIn diagnosis (replaces LinkedIn optimizer — old block above removed in a later task)
+    // LinkedIn diagnosis
     "linkedin.diag.title": "LinkedIn Profile Diagnosis",
     "linkedin.diag.desc": "Data-grounded diagnosis of your real profile vs. recruiter search",
     "linkedin.diag.language": "Output language:",

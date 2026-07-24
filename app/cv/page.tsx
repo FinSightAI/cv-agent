@@ -22,7 +22,7 @@ import { Upload, FileText, Loader2, Sparkles, Pencil, X, Check, Plus, Download }
 import type { ParsedResume } from "@/lib/ai/schemas";
 import { downloadDocx, resumeToDocxBlob } from "@/lib/cv-export-docx";
 import { useLang } from "@/components/lang-provider";
-import { LinkedInOptimizer } from "@/components/linkedin-optimizer";
+import { LinkedInDiagnosis } from "@/components/linkedin-diagnosis";
 
 function cvCompleteness(p: ParsedResume): number {
   let score = 0;
@@ -269,7 +269,7 @@ function ResumeView({
         {t("cv.localStorageNote")}
       </p>
 
-      <LinkedInOptimizer />
+      <LinkedInDiagnosis />
     </div>
   );
 }
