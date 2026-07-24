@@ -10,6 +10,10 @@ import type {
   TailoredResume,
   CVSuggestions,
   InterviewPrep,
+  LinkedInProfileInput,
+  LinkedInAnalyticsInput,
+  LinkedInUsagePatternInput,
+  LinkedInDiagnosisResult,
 } from "@/lib/ai/schemas";
 
 export type InterviewDebrief = {
@@ -26,10 +30,19 @@ export type InterviewDebrief = {
 const RESUME_KEY = "cv-agent:resume:v1";
 const JOBS_KEY = "cv-agent:jobs:v1";
 const PREFS_KEY = "cv-agent:prefs:v1";
+const LINKEDIN_DIAGNOSIS_KEY = "cv-agent:linkedinDiagnosis:v1";
 
 export type StoredResume = {
   parsed: ParsedResume;
   rawText: string;
+  updatedAt: string;
+};
+
+export type StoredLinkedInDiagnosis = {
+  profile: LinkedInProfileInput;
+  analytics: LinkedInAnalyticsInput;
+  usagePattern: LinkedInUsagePatternInput;
+  result?: LinkedInDiagnosisResult;
   updatedAt: string;
 };
 
@@ -124,5 +137,13 @@ export const store = {
   },
   setPrefs(p: StoredPreferences) {
     localStorage.setItem(PREFS_KEY, JSON.stringify(p));
+  },
+
+  getLinkedInDiagnosis(): StoredLinkedInDiagnosis | null {
+    if (typeof window === "undefined") return null;
+    return safeParse<StoredLinkedInDiagnosis>(localStorage.getItem(LINKEDIN_DIAGNOSIS_KEY));
+  },
+  setLinkedInDiagnosis(d: StoredLinkedInDiagnosis) {
+    localStorage.setItem(LINKEDIN_DIAGNOSIS_KEY, JSON.stringify(d));
   },
 };
