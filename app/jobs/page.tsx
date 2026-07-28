@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -17,11 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Briefcase, Search, X, Sparkles, Clock } from "lucide-react";
+import { Plus, Briefcase, Search, X, Sparkles, Clock, Loader2, Download } from "lucide-react";
 import { store, type StoredJob } from "@/lib/storage";
 import { useLang } from "@/components/lang-provider";
 import type { Key } from "@/lib/i18n/dictionary";
 import { formatDate } from "@/lib/utils";
+import { resumeToDocxBlob } from "@/lib/cv-export-docx";
+import type { TailoredResume } from "@/lib/ai/schemas";
+import { toast } from "sonner";
 
 type StatusFilter = "all" | StoredJob["status"];
 type ScoreFilter = "all" | "60" | "75" | "85";
@@ -65,6 +69,7 @@ export default function JobsPage() {
   const [status, setStatus] = useState<StatusFilter>("all");
   const [minScore, setMinScore] = useState<ScoreFilter>("all");
   const [remoteOnly, setRemoteOnly] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setJobs(store.getJobs());
@@ -94,6 +99,25 @@ export default function JobsPage() {
     setStatus("all");
     setMinScore("all");
     setRemoteOnly(false);
+  }
+
+  function toggleSelect(id: string, e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function selectAllVisible() {
+    setSelectedIds(new Set(filtered.map((j) => j.id)));
+  }
+
+  function clearSelection() {
+    setSelectedIds(new Set());
   }
 
   return (
@@ -176,6 +200,29 @@ export default function JobsPage() {
         </div>
       )}
 
+      {/* Batch selection bar */}
+      {selectedIds.size > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2">
+          <span className="text-sm font-medium">
+            {selectedIds.size} {t("jobs.batch.selected")}
+          </span>
+          <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={selectAllVisible}>
+            {t("jobs.batch.selectAll")}
+          </Button>
+          <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={clearSelection}>
+            {t("jobs.batch.clearSelection")}
+          </Button>
+          <div className="flex-1" />
+          <BatchTailorButton
+            jobIds={Array.from(selectedIds)}
+            jobs={jobs}
+            lang={lang}
+            t={t}
+            onDone={clearSelection}
+          />
+        </div>
+      )}
+
       {/* Empty states */}
       {jobs.length === 0 && (
         <Card className="glass border-dashed">
@@ -210,10 +257,181 @@ export default function JobsPage() {
       {filtered.length > 0 && (
         <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((j) => (
-            <JobCard key={j.id} job={j} lang={lang} t={t} />
+            <JobCard
+              key={j.id}
+              job={j}
+              lang={lang}
+              t={t}
+              selected={selectedIds.has(j.id)}
+              onToggleSelect={toggleSelect}
+            />
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function sanitizeFilename(company: string, title: string): string {
+  return `${company}-${title}`
+    .replace(/[^\p{L}\p{N}\-_. ]/gu, "")
+    .replace(/\s+/g, "-")
+    .slice(0, 60);
+}
+
+function dedupeFilename(base: string, used: Set<string>): string {
+  if (!used.has(base)) {
+    used.add(base);
+    return base;
+  }
+  let i = 2;
+  while (used.has(`${base}-${i}`)) i++;
+  const name = `${base}-${i}`;
+  used.add(name);
+  return name;
+}
+
+type BatchStatus = "pending" | "retrying" | "done" | "failed";
+type BatchRow = { jobId: string; title: string; company: string; status: BatchStatus; error?: string };
+
+function BatchTailorButton({
+  jobIds,
+  jobs,
+  lang,
+  t,
+  onDone,
+}: {
+  jobIds: string[];
+  jobs: StoredJob[];
+  lang: string;
+  t: (k: Key) => string;
+  onDone: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [rows, setRows] = useState<BatchRow[]>([]);
+
+  async function tailorOne(
+    job: StoredJob,
+    resumeParsed: unknown,
+    used: Set<string>,
+    files: { filename: string; blob: Blob; company: string; title: string }[],
+    attempt = 1,
+  ): Promise<void> {
+    const res = await fetch("/api/cv/tailor", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ resume: resumeParsed, job: job.parsed }),
+    });
+
+    if (res.status === 429) {
+      const { retryAfter } = await res.json().catch(() => ({ retryAfter: 15 }));
+      if (attempt >= 3) throw new Error(t("error.rateLimit"));
+      setRows((prev) =>
+        prev.map((r) =>
+          r.jobId === job.id ? { ...r, status: "retrying", error: `retry in ${retryAfter}s` } : r,
+        ),
+      );
+      await new Promise((resolve) => setTimeout(resolve, (retryAfter + 1) * 1000));
+      return tailorOne(job, resumeParsed, used, files, attempt + 1);
+    }
+
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: "Tailor failed" }));
+      throw new Error(error || "Tailor failed");
+    }
+
+    const { result } = (await res.json()) as { result: TailoredResume };
+    const updated: StoredJob = { ...job, tailoredResume: result };
+    store.saveJob(updated);
+
+    const blob = await resumeToDocxBlob(result.resume, lang as "he" | "en");
+    const base = sanitizeFilename(job.parsed.company, job.parsed.title);
+    const filename = dedupeFilename(base, used);
+    files.push({
+      filename: `${filename}.docx`,
+      blob,
+      company: job.parsed.company,
+      title: job.parsed.title,
+    });
+
+    setRows((prev) => prev.map((r) => (r.jobId === job.id ? { ...r, status: "done" } : r)));
+  }
+
+  async function run() {
+    const resume = store.getResume();
+    if (!resume?.parsed) {
+      toast.error(t("tailor.noResume"));
+      return;
+    }
+    const selected = jobs.filter((j) => jobIds.includes(j.id));
+    setBusy(true);
+    setRows(
+      selected.map((j) => ({
+        jobId: j.id,
+        title: j.parsed.title,
+        company: j.parsed.company,
+        status: "pending",
+      })),
+    );
+
+    const used = new Set<string>();
+    const files: { filename: string; blob: Blob; company: string; title: string }[] = [];
+
+    // Strictly sequential: /api/cv/tailor allows 4 req/min per IP (HEAVY_AI_LIMIT,
+    // its own scope bucket — see lib/rate-limit.ts). Firing this concurrently
+    // just turns into a wall of 429s, same lesson already learned for bulk job add.
+    for (const job of selected) {
+      try {
+        await tailorOne(job, resume.parsed, used, files);
+      } catch (err) {
+        setRows((prev) =>
+          prev.map((r) =>
+            r.jobId === job.id ? { ...r, status: "failed", error: (err as Error).message } : r,
+          ),
+        );
+      }
+    }
+
+    if (files.length === 0) {
+      toast.error(t("jobs.batch.zipFailed"));
+      setBusy(false);
+      return;
+    }
+
+    const manifest = files.map((f) => `${f.company} | ${f.title} | ${f.filename}`).join("\n");
+
+    const { default: JSZip } = await import("jszip");
+    const zip = new JSZip();
+    zip.file("manifest.txt", manifest);
+    for (const f of files) zip.file(f.filename, f.blob);
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tailored-cvs.zip";
+    a.click();
+    URL.revokeObjectURL(url);
+
+    toast.success(`${files.length}/${selected.length} ${t("jobs.batch.summary")}`);
+    setBusy(false);
+    onDone();
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      {rows.length > 0 && busy && (
+        <span className="text-xs text-muted-foreground">
+          {rows.filter((r) => r.status === "done").length}/{rows.length}
+        </span>
+      )}
+      <Button type="button" size="sm" onClick={run} disabled={busy}>
+        {busy ? (
+          <Loader2 className="size-4 me-1 animate-spin" />
+        ) : (
+          <Download className="size-4 me-1" />
+        )}
+        {busy ? t("jobs.batch.running") : t("jobs.batch.run")}
+      </Button>
     </div>
   );
 }
@@ -222,20 +440,31 @@ function JobCard({
   job: j,
   lang,
   t,
+  selected,
+  onToggleSelect,
 }: {
   job: StoredJob;
   lang: string;
   t: (k: Key) => string;
+  selected: boolean;
+  onToggleSelect: (id: string, e: React.MouseEvent) => void;
 }) {
   const stale = isStale(j);
   return (
     <Link href={`/jobs/${j.id}`}>
       <Card
-        className={`glass hover:border-primary/40 transition-all h-full border-s-2 ${STATUS_BORDER[j.status]}`}
+        className={`glass hover:border-primary/40 transition-all h-full border-s-2 relative ${STATUS_BORDER[j.status]}`}
       >
         <CardContent className="p-4 space-y-3">
+          {/* Selection checkbox — stopPropagation so it never triggers the card's Link navigation */}
+          <div
+            className="absolute start-2 top-2 z-10"
+            onClick={(e) => onToggleSelect(j.id, e)}
+          >
+            <Checkbox checked={selected} onCheckedChange={() => {}} />
+          </div>
           {/* Header row */}
-          <div className="flex items-start justify-between gap-2">
+          <div className="flex items-start justify-between gap-2 ps-6">
             <div className="min-w-0 space-y-0.5">
               <p className="font-semibold text-sm truncate leading-tight">{j.parsed.title}</p>
               <p className="text-xs text-muted-foreground truncate">
