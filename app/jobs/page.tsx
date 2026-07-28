@@ -101,9 +101,7 @@ export default function JobsPage() {
     setRemoteOnly(false);
   }
 
-  function toggleSelect(id: string, e: React.MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
+  function toggleSelect(id: string) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -447,7 +445,7 @@ function JobCard({
   lang: string;
   t: (k: Key) => string;
   selected: boolean;
-  onToggleSelect: (id: string, e: React.MouseEvent) => void;
+  onToggleSelect: (id: string) => void;
 }) {
   const stale = isStale(j);
   return (
@@ -456,12 +454,19 @@ function JobCard({
         className={`glass hover:border-primary/40 transition-all h-full border-s-2 relative ${STATUS_BORDER[j.status]}`}
       >
         <CardContent className="p-4 space-y-3">
-          {/* Selection checkbox — stopPropagation so it never triggers the card's Link navigation */}
+          {/* Selection checkbox — toggling lives in onCheckedChange (the primitive's own
+              state-change callback), while the wrapping div's onClick separately stops
+              the same click from bubbling further, so it never reaches the card's Link
+              and triggers navigation. Both are needed: the primitive does not stop native
+              propagation on its own. */}
           <div
-            className="absolute start-2 top-2 z-10"
-            onClick={(e) => onToggleSelect(j.id, e)}
+            className="absolute start-2 top-2 z-10 flex"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
           >
-            <Checkbox checked={selected} onCheckedChange={() => {}} />
+            <Checkbox checked={selected} onCheckedChange={() => onToggleSelect(j.id)} />
           </div>
           {/* Header row */}
           <div className="flex items-start justify-between gap-2 ps-6">
