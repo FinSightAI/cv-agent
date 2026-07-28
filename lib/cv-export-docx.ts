@@ -208,7 +208,11 @@ export async function resumeToDocxBlob(r: ParsedResume, lang: "he" | "en"): Prom
     );
   }
 
-  const doc = new Document({ sections: [{ children }] });
+  const doc = new Document({
+    creator: r.fullName || "Un-named",
+    lastModifiedBy: r.fullName || "Un-named",
+    sections: [{ children }],
+  });
   return Packer.toBlob(doc);
 }
 
