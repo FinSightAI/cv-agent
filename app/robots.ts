@@ -6,8 +6,9 @@ const SITE_URL =
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/api/"] },
+      // Private tool: no public discovery. Also password-gated in middleware.ts.
+      { userAgent: "*", disallow: "/" },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    // No sitemap declared: nothing here is meant to be found.
   };
 }
