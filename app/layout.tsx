@@ -54,13 +54,19 @@ export const metadata: Metadata = {
       "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
     locale: "he_IL",
     alternateLocale: ["en_US"],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Jobos" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Jobos — The operating system for your job search",
     description:
       "AI agent that scores fit, drafts cover letters, and manages your application pipeline.",
+    images: ["/og.png"],
   },
+  // Was missing: without a canonical, the apex, the /?utm_… variants and any
+  // preview deployment all competed as separate pages for the same content.
+  alternates: { canonical: "/" },
+  icons: { icon: "/favicon.svg", apple: "/apple-touch-icon.png" },
   robots: { index: true, follow: true },
 };
 
@@ -80,6 +86,41 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <body className="min-h-full bg-background text-foreground relative">
+          {/* Organization + WebSite + SoftwareApplication. The site had no
+              structured data at all, so an AI answer engine asked about it had
+              nothing to identify or cite. Nothing unverifiable is asserted —
+              no rating, no price, no address. */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@graph": [
+                  { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Jobos", url: `${SITE_URL}/` },
+                  {
+                    "@type": "WebSite",
+                    "@id": `${SITE_URL}/#website`,
+                    name: "Jobos",
+                    url: `${SITE_URL}/`,
+                    inLanguage: ["he", "en"],
+                    publisher: { "@id": `${SITE_URL}/#organization` },
+                  },
+                  {
+                    "@type": "SoftwareApplication",
+                    name: "Jobos",
+                    url: `${SITE_URL}/`,
+                    description:
+                      "AI agent that scores job fit, drafts cover letters, and manages an application pipeline.",
+                    applicationCategory: "BusinessApplication",
+                    operatingSystem: "Web",
+                    publisher: { "@id": `${SITE_URL}/#organization` },
+                  },
+                ],
+                // "<" escaped so a value containing "</script>" can never close
+                // the tag early and turn the rest into live markup.
+              }).replace(/</g, "\\u003c"),
+            }}
+          />
           <ThemeProvider>
             <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
               <div className="absolute -top-40 start-1/3 size-[600px] rounded-full bg-primary/10 blur-[120px]" />

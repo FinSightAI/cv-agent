@@ -1,0 +1,10 @@
+# Jobos
+
+> AI CV and job-application assistant — tailors a résumé to a specific role in minutes.
+
+## About
+- Tailors a CV to a specific job description.
+- Web-based; no install.
+
+## Pages
+- [Jobos](https://cv-agent-opal.vercel.app/)
